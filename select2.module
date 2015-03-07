@@ -158,20 +158,6 @@ function select2_element_info() {
 }
 
 /**
- * Implements hook_system_info_alter().
- *
- * To provide metadata of Select2 module to drupal, when it installed
- * directly from git repository.
- */
-function select2_system_info_alter(&$info, $file, $type) {
-
-  if ($type == 'module' && $file->name == 'select2' && !$info['version']) {
-    $info['version'] = SELECT2_MODULE_VERSION;
-  }
-
-}
-
-/**
  * Returns HTML for a hidden form element for Select2 plugin.
  *
  * @param array $variables
