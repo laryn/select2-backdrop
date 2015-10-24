@@ -333,13 +333,13 @@
 
           var select2Container = false;
 
-          if ($element.select2().data('select2') != undefined) {
+          if ($element.data('select2') != undefined) {
 
-            if ($element.select2().data('select2').$container != undefined) {
-              select2Container = $element.select2().data('select2').$container;
+            if ($element.data('select2').$container != undefined) {
+              select2Container = $element.data('select2').$container;
             }
-            else if ($element.select2().data('select2').container != undefined) {
-              select2Container = $element.select2().data('select2').container;
+            else if ($element.data('select2').container != undefined) {
+              select2Container = $element.data('select2').container;
             }
           }
 
@@ -382,7 +382,7 @@
 
         } catch (e) {
           if (typeof window.console == "object" && typeof console.error == "function") {
-            console.error('Error: ' + e);
+            //console.error('Error: ' + e);
           }
         }
 
@@ -445,6 +445,8 @@
           return false;
         });
 
+        $('.tabledrag-hide select').addClass('select2-excluded');
+        
         if (Drupal.settings.select_2.settings_updated) {
           _select2_process_elements();
         }
