@@ -381,7 +381,7 @@
           }
 
         } catch (e) {
-          if (typeof windows.console == "object" && typeof console.error == "function") {
+          if (typeof window.console == "object" && typeof console.error == "function") {
             console.error('Error: ' + e);
           }
         }
