@@ -1060,57 +1060,6 @@ function _select2_element_validate_integer_positive_or_zero($element, &$form_sta
 }
 
 /**
- * Checks frontend jquery version.
- *
- * @return bool
- *   if 1.8 or greater
- */
-function select2_check_jq_front_end_version() {
-
-  if (variable_get('select2_disable_jq_version_check', FALSE)) {
-    return TRUE;
-  }
-
-  $jq_version = variable_get('jquery_update_jquery_version', '');
-
-  if ($jq_version) {
-    if (version_compare($jq_version, '1.8', '>=')) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-/**
- * Checks admin jquery version.
- *
- * @return bool
- *   if 1.8 or greater
- */
-function select2_check_jq_admin_mode_version() {
-
-  if (variable_get('select2_disable_jq_version_check', FALSE)) {
-    return TRUE;
-  }
-
-  if (variable_get('select2_use_for_all_select_elements_for_admin_pages')) {
-
-    $jq_version = variable_get('jquery_update_jquery_version', '');
-
-    if ($jq_version) {
-      if (version_compare($jq_version, '1.8', '>=')) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
-/**
  * Excluded settings.
  */
 function _select2_set_exuled_for_settings() {
