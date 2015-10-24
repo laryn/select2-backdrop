@@ -60,6 +60,25 @@ function select2_settings_form($form, &$form_state) {
     '#description'      => t('If count of available options is less of value of this field, search box will be hided.'),
   );
 
+  $form['default_settings']['select2_default_width'] = array(
+    '#type'    => 'select',
+    '#title'   => t('Default "width" property value'),
+    '#default_value' => variable_get('select2_default_width', 'element'),
+    '#options' => array(
+      'off' => 'Off',
+      'element' => 'Element',
+      'copy' => 'Copy',
+      'resolve' => 'Resolve',
+    ),
+    '#description' => t('Values description:
+<ul>
+<li><b>off</b> - No width attribute will be set. Keep in mind that the container div copies classes from the source element so setting the width attribute may not always be necessary.</li>
+<li><b>element</b> - Uses javascript to calculate the width of the source element.</li>
+<li><b>copy</b> - Copies the value of the width style attribute set on the source element.</li>
+<li><b>resolve</b> - First attempts to <u>copy</u> than falls back on <u>element</u>.</li>
+</ul>'),
+  );
+
   $form['excluded_elements'] = array(
     '#type' => 'fieldset',
     '#title' => t('Excluded elements'),

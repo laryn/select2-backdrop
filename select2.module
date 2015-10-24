@@ -1182,7 +1182,7 @@ function _select2_default_settings() {
     'separator'               => SELECT2_VALUES_SEPARATOR,
     'jqui_sortable'           => FALSE,
     'dropdownAutoWidth'       => TRUE,
-    'width'                   => 'element',
+    'width'                   => variable_get('select2_default_width', 'element'),
     'containerCssClass'       => '',
     'minimumResultsForSearch' => variable_get('select2_min_options_count_for_search', 15),
   );
