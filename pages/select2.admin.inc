@@ -9,13 +9,6 @@
  */
 function select2_settings_form($form, &$form_state) {
 
-  $form['select2_disable_jq_version_check'] = array(
-    '#type'          => 'checkbox',
-    '#title'         => t('Disable jQuery version check'),
-    '#description'   => t('If checked, Select2 will no longer check for min req. version of jQuery library.'),
-    '#default_value' => variable_get('select2_disable_jq_version_check', FALSE),
-  );
-
   $form['select2_compression_type'] = array(
     '#type' => 'radios',
     '#title' => t('Choose Select2 compression level'),

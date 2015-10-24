@@ -104,7 +104,7 @@ function select2_libraries_info() {
     // 2.1.12
     'version arguments' => array(
       'file' => 'select2.jquery.json',
-      'pattern' => '@"version": "([0-9\.a-z]+)"@',
+      'pattern' => '@"version": "([0-9\.a-z\-]+)"@',
       'lines' => 20,
       'cols'  => 400,
     ),
@@ -127,6 +127,48 @@ function select2_libraries_info() {
         'files' => array(
           'js' => array('select2.min.js'),
           'css' => array('select2.css'),
+        ),
+      ),
+    ),
+    'versions' => array(
+      '3' => array(
+        'files' => array(
+          'js' => array('select2.js'),
+          'css' => array('select2.css'),
+        ),
+        'variants' => array(
+          'source' => array(
+            'files' => array(
+              'js' => array('select2.js'),
+              'css' => array('select2.css'),
+            ),
+          ),
+          'minified' => array(
+            'files' => array(
+              'js' => array('select2.min.js'),
+              'css' => array('select2.css'),
+            ),
+          ),
+        ),
+      ),
+      '4' => array(
+        'files' => array(
+          'js' => array('dist/js/select2.full.js'),
+          'css' => array('dist/css/select2.css'),
+        ),
+        'variants' => array(
+          'source' => array(
+            'files' => array(
+              'js' => array('dist/js/select2.full.js'),
+              'css' => array('dist/css/select2.css'),
+            ),
+          ),
+          'minified' => array(
+            'files' => array(
+              'js' => array('dist/js/select2.full.min.js'),
+              'css' => array('dist/css/select2.min.css'),
+            ),
+          ),
         ),
       ),
     ),
@@ -210,18 +252,8 @@ function select2_element_info_alter(&$type) {
  */
 function select2_select_element_process($element, &$form_state) {
 
-  global $_select2_jq_version_warning;
-
-  if (isset($_select2_jq_version_warning) ||
-      ((!_select2_current_path_is_admin(current_path()) && !select2_check_jq_front_end_version()) ||
-      (_select2_current_path_is_admin(current_path()) && !select2_check_jq_admin_mode_version()))) {
-
-    if (!isset($_select2_jq_version_warning)) {
-      drupal_set_message(t('Select2 plugin can\'t be used with current jQuery version. Check <a href="@status_info">status info</a> for other instructions.',
-      array('@status_info' => base_path() . 'admin/reports/status')), 'warning');
-    }
-
-    $_select2_jq_version_warning = TRUE;
+  if (((!_select2_current_path_is_admin(current_path())) ||
+      (_select2_current_path_is_admin(current_path())))) {
 
     return $element;
   }
@@ -381,19 +413,7 @@ function select2_select_element_process($element, &$form_state) {
  */
 function select2_process_textfield($element, &$form_state) {
 
-  global $_select2_jq_version_warning;
-
-  if (isset($_select2_jq_version_warning) ||
-  ((!path_is_admin(current_path()) && !select2_check_jq_front_end_version()) ||
-  (path_is_admin(current_path()) && !select2_check_jq_admin_mode_version()))) {
-
-    if (!isset($_select2_jq_version_warning)) {
-      drupal_set_message(t('Select2 plugin can\'t be used with current jQuery version. Check <a href="@status_info">status info</a> for other instructions.',
-      array('@status_info' => base_path() . 'admin/reports/status')), 'warning');
-    }
-
-    $_select2_jq_version_warning = TRUE;
-
+  if (!path_is_admin(current_path()) || path_is_admin(current_path())) {
     return $element;
   }
 
@@ -444,6 +464,12 @@ function select2_process_textfield($element, &$form_state) {
     'containerCssClass'  => 'ac-replaced-by-select2',
   );
 
+  $element['#attributes'] += array(
+    'data-select2-ajax'     => 'ac_element_ajax',
+    'data-select2-ajaxpath' => url($element['#autocomplete_path']),
+    'data-select2-initSelection' => 'ac_s2_init_selecttion'
+  );
+
   if (!isset($element['#required']) || !$element['#required']) {
     $s2_ac_defaults['allowClear'] = TRUE;
     $s2_ac_defaults['placeholder'] = t('Start search');
@@ -459,6 +485,8 @@ function select2_process_textfield($element, &$form_state) {
       $s2_ac_defaults['comma_replacement'] = SELECT2_COMMA_REPLACEMENT;
 
       $s2_ac_defaults['initSelection'] = 'taxonomy_term_ref_ac_s2_init_selecttion';
+
+      $element['#attributes']['data-select2-initSelection'] = 'taxonomy_term_ref_ac_s2_init_selecttion';
 
       $description_prefix = '';
 
@@ -535,6 +563,19 @@ function select2_process_textfield($element, &$form_state) {
 
     array_unshift($element['#element_validate'], '_select2_comma_replacement_validate');
   }
+
+    $library = libraries_detect('select2');
+
+    $branch_version = substr($library['version'], 0, 1);
+
+    switch($branch_version) {
+      case 4:
+//         $element['#type'] = 'select';
+//         $element['#theme'] = 'select';
+//         $element['#options'][$element['#default_value']] = $element['#default_value'];
+//         dpm($element);
+        break;
+    }
 
   return $element;
 }
@@ -942,20 +983,10 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
     return;
   }
 
-  $settinings_updated_flag = '';
+  $branch_version = substr($library['version'], 0, 1);
 
-  if (!variable_get('select2_update_settings_by_ajax', FALSE)) {
-
-    $settinings_updated_flag = 'Drupal.Select2.settings_updated = true;';
-
-  }
-
-  $init_inline_script = '(function ($) {Drupal.Select2 = {base_root:" ' . $base_root . '/"}; ' . $settinings_updated_flag . ' })(jQuery)';
-
-  drupal_add_js($init_inline_script, array('type' => 'inline', 'weight' => -1100));
-
-  drupal_add_js(SELECT2_MODULE_PATH . '/js/select2.preinit.js', array('weight' => -1000));
   drupal_add_js(SELECT2_MODULE_PATH . '/js/select2_integration.js', array('weight' => 1000));
+
   drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
   // Load and define exclude lists.
@@ -976,6 +1007,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   $settings2 = array(
     'select_2' => array(
+      'branch' => intval($branch_version),
       'excludes' => array(
         'by_id' => array(
           'values' => array(),
@@ -990,6 +1022,10 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
       'elements' => array(),
     ),
   );
+
+  $settinings_updated_flag = !variable_get('select2_update_settings_by_ajax', FALSE);
+
+  $settings2['select_2']['settings_updated'] = $settinings_updated_flag;
 
   $seeting_result = array_merge_recursive($settings, $settings2);
 

@@ -9,6 +9,8 @@
 
   var jqVersionSplited = jqversion.split('.');
 
+  Drupal.select2functions = {};
+
   Drupal.select2functions.formatSelection_taxonomy_terms_item = function (term) {
 
     if (term.hover_title != undefined) {
@@ -231,7 +233,8 @@
           $.extend(true, options, Drupal.settings.select_2.elements[id]);
 
 
-          if ((typeof (options.allowClear) == 'boolean' && options.allowClear) || $('option[value=""]', $element).length > 0) {
+          if ((typeof (options.allowClear) == 'boolean' && options.allowClear)
+              || $('option[value=""]', $element).length > 0) {
 
             if ($('option[value=""]', $element).length > 0) {
 
@@ -241,6 +244,14 @@
               $('option[value=""]', $element).html('');
             }
 
+            if (options.placeholder == undefined) {
+              options.allowClear = false;
+            }
+            else {
+              if (options.allowClear == undefined) {
+                options.allowClear = true;
+              }
+            }
           }
 
 
@@ -320,17 +331,31 @@
 
           $element.select2(options);
 
-          // need fix select2 container width
-          if ($element.select2("container").width() > 0 && options.allowClear
-              && options.width != undefined
-              && (options.width == 'element' || options.width == 'resolve')) {
+          var select2Container = false;
 
-            var cur_width = $element.select2("container").width();
-            $element.select2("container").width(cur_width + 15);
+          if ($element.select2().data('select2') != undefined) {
+
+            if ($element.select2().data('select2').$container != undefined) {
+              select2Container = $element.select2().data('select2').$container;
+            }
+            else if ($element.select2().data('select2').container != undefined) {
+              select2Container = $element.select2().data('select2').container;
+            }
           }
 
-          if ($element.hasClass('error')) {
-            $element.select2("container").addClass('error');
+          if (select2Container) {
+            // need fix select2 container width
+            if (select2Container.width() > 0 && options.allowClear
+                && options.width != undefined
+                && (options.width == 'element' || options.width == 'resolve')) {
+
+              var cur_width = select2Container.width();
+              select2Container.width(cur_width + 15);
+            }
+
+            if ($element.hasClass('error')) {
+              select2Container.addClass('error');
+            }
           }
 
           //need to disable focusin.dialog event
@@ -341,15 +366,18 @@
             options.jqui_sortable != undefined &&
             options.jqui_sortable) {
 
-            $element.select2("container").find("ul.select2-choices").sortable({
-              containment: 'parent',
-              start: function () {
-                $element.select2("onSortStart");
-              },
-              update: function () {
-                $element.select2("onSortEnd");
-              }
-            });
+            if (select2Container) {
+              select2Container.find("ul.select2-choices").sortable({
+                containment: 'parent',
+                start: function () {
+                  $element.select2("onSortStart");
+                },
+                update: function () {
+                  $element.select2("onSortEnd");
+                }
+              });
+            }
+
           }
 
         } catch (e) {
@@ -415,29 +443,31 @@
           return false;
         });
 
-        if (Drupal.Select2.settings_updated) {
-
-          if (Drupal.Select2.current_exludes != false) {
-            Drupal.settings.select_2.excludes = Drupal.Select2.current_exludes;
-          }
-
+        if (Drupal.settings.select_2.settings_updated) {
           _select2_process_elements();
-        } else {
-
-          $(document).bind('select2_settings_updated', function () {
-
-            if (Drupal.Select2.current_exludes != false) {
-              Drupal.settings.select_2.excludes = Drupal.Select2.current_exludes;
-            }
-
-            _select2_process_elements();
-
-          });
-
         }
+        else {
 
+          var setting_update_url = Drupal.settings.basePath + 'select2/ajax/get_settings';
+
+          var jqxhr = $.ajax(setting_update_url)
+          .done(function (data) {
+            if (data[0] != undefined && data[0].settings != undefined
+                && data[0].settings.select_2 != undefined
+                && data[0].settings.select_2.excludes != undefined) {
+
+              Drupal.settings.select_2.excludes = data[0].settings.select_2.excludes;
+
+            }
+          })
+          .fail(function () {
+            console.error('Error: while updating Select2 setting by ajax request.');
+          })
+          .always(function () {
+            _select2_process_elements();
+          });
+        }
       }
-
     },
   };
 
