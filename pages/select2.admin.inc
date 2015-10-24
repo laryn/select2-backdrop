@@ -90,7 +90,7 @@ function select2_settings_form($form, &$form_state) {
   );
 
   $form['select2_update_settings_by_ajax'] = array(
-    '#title'          => t('Updtae setting by ajax'),
+    '#title'          => t('Update setting by ajax'),
     '#description'    => t('This option can be used when cache enabled for pages.
 <b>After enabling/disabling this option your current cache will be cleared.</b>.'),
     '#type'           => 'checkbox',
