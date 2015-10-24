@@ -252,12 +252,6 @@ function select2_element_info_alter(&$type) {
  */
 function select2_select_element_process($element, &$form_state) {
 
-  if (((!_select2_current_path_is_admin(current_path())) ||
-      (_select2_current_path_is_admin(current_path())))) {
-
-    return $element;
-  }
-
   if (isset($element['#options']) && is_array($element['#options'])) {
     foreach ($element['#options'] as $key => $value) {
       if (is_string($value)) {
@@ -412,10 +406,6 @@ function select2_select_element_process($element, &$form_state) {
  * Process textfield.
  */
 function select2_process_textfield($element, &$form_state) {
-
-  if (!path_is_admin(current_path()) || path_is_admin(current_path())) {
-    return $element;
-  }
 
   if (isset($element['#field_name']) && $element['#field_name']) {
     $field_info = field_info_field($element['#field_name']);
@@ -982,6 +972,8 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
   $branch_version = substr($library['version'], 0, 1);
 
   drupal_add_js(SELECT2_MODULE_PATH . '/js/select2_integration.js', array('weight' => 1000));
+
+  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
 
   drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
