@@ -973,7 +973,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   drupal_add_js(SELECT2_MODULE_PATH . '/js/select2_integration.js', array('weight' => 1000));
 
-  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
+//   drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
 
   drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
@@ -1118,7 +1118,7 @@ function _select2_default_settings() {
   return array(
     'separator'               => SELECT2_VALUES_SEPARATOR,
     'jqui_sortable'           => FALSE,
-    'dropdownAutoWidth'       => TRUE,
+    'dropdownAutoWidth'       => FALSE,
     'width'                   => variable_get('select2_default_width', 'element'),
     'containerCssClass'       => '',
     'minimumResultsForSearch' => variable_get('select2_min_options_count_for_search', 15),
