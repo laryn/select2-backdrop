@@ -9,7 +9,7 @@
 
   var jqVersionSplited = jqversion.split('.');
 
-  Drupal.select2functions = {};
+  Drupal.select2functions = Drupal.select2functions || {};
 
   Drupal.select2functions.formatSelection_taxonomy_terms_item = function (term) {
 
