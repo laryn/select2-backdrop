@@ -397,6 +397,8 @@ function select2_select_element_process($element, &$form_state) {
 
   }
 
+  drupal_alter('select2_element', $element);
+
   _select2_set_element_settings($element_id, $element['#select2']);
   $element['#select2_processed'] = TRUE;
   return $element;
@@ -540,6 +542,8 @@ function select2_process_textfield($element, &$form_state) {
     $element['#select2']['placeholder'] = t('Type text for search');
 
   }
+
+  drupal_alter('select2_element', $element);
 
   _select2_set_element_settings($element_id, $element['#select2']);
 
