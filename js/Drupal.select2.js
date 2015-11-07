@@ -145,6 +145,9 @@
   Drupal.Select2.functionsScope.getAjaxObjectForAcElement = function (options) {
     return {
       url: function (term) {
+        if (options.path_is_absolute) {
+          return options.autocomplete_path + Drupal.encodePath(term);
+        }
         return Drupal.settings.basePath + options.autocomplete_path + '/' + Drupal.encodePath(term);
       },
       dataType: 'json',
@@ -259,7 +262,8 @@
     
     if ($element.hasClass('no-select2')) return;
     
-    var id = $element.attr('id');
+    var self = this,
+        id = $element.attr('id');
     
     $element.id = id;
     
@@ -284,6 +288,15 @@
     
     var select2Container = false;
 
+    if (options.events_hadlers) {
+      $.each(options.events_hadlers, function (eventName, handlerName) {
+        var handler = self.getObjectOrFunctionByName(handlerName);
+        if (handler && typeof handler == 'function') {
+          $element.on(eventName, handler);
+        }
+      })
+    }
+    
     if ($element.data('select2') != undefined) {
       if ($element.data('select2').$container != undefined) {
         select2Container = $element.data('select2').$container;
@@ -367,8 +380,7 @@
       if (options[propertyName] && typeof options[propertyName] == 'string') {
         var func = self.searchFunctionInScope(options[propertyName]);
         if (func) {
-          if (options[propertyName] == 'ac_element_get_ajax_object'
-              || options[propertyName] == 'getAjaxObjectForAcElement') {
+          if (propertyName == 'ajax' && typeof func == 'function') {
             options[propertyName] = func(options);
           } else {
             options[propertyName] = func;
