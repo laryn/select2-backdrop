@@ -499,9 +499,10 @@
         Drupal.Select2Processor.setContext(context);
       }
       else {
-
-        var setting_update_url = Drupal.settings.basePath + 'select2/ajax/get_settings',
         
+        Drupal.settings.select_2.settings_updated = true;
+        
+        var setting_update_url = Drupal.settings.basePath + 'select2/ajax/get_settings',
         jqxhr = $.ajax(setting_update_url)
         .done(function (data) {
           //merging with element defined settings
