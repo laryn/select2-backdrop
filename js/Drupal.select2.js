@@ -231,6 +231,16 @@
         .once('select2-excluded-by-selectors').addClass('no-select2');
       }
     }
+    
+    if (Drupal.settings.select_2.excludes.by_class.length > 0) {
+      var byClassSelector = Drupal.settings.select_2.excludes.by_class.join(', .');
+      byClassSelector = '.' + byClassSelector;
+      try {
+        $(byClassSelector, this.context).once('select2-excluded-by-classes').addClass('no-select2');
+      } catch (e) {
+        throw 'ERROR while setting exlution classes by classes list: ' + e.message;
+      }
+    }
   }
   
   Drupal.Select2.prototype.attachSelect2 = function() {

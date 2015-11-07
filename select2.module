@@ -967,7 +967,14 @@ function select_2_hidden_value_callback($element, $input = FALSE, $form_state = 
  */
 function _select2_post_load_library_callback(&$library, $version, $variant) {
 
-  global $language, $base_root;
+  global $language;
+
+  if ($excluded_paths = variable_get('select2_excluded_paths', '')) {
+    if (drupal_match_path($_GET['q'], $excluded_paths) ||
+      drupal_match_path(drupal_get_path_alias($_GET['q']), $excluded_paths)) {
+        return;
+    }
+  }
 
   $branch_version = substr($library['version'], 0, 1);
 
