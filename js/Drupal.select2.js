@@ -1,7 +1,7 @@
 /**
  * Provides Select2 plugin for elements.
  */
-(function ($) {
+(function ($, window, document) {
 
   String.prototype.extTrim = function (char) {
 
@@ -277,7 +277,9 @@
                   : {};
     
     options = this.prepareElementOptions(options, $element);
-                  
+               
+    $(document).trigger('select2.alterElementOptions', [$element, options]);
+    
     try {
       $element.select2(options);
     } catch (e) {
@@ -539,4 +541,4 @@
     }
   };
   
-})(jQuery);
+})(jQuery, window, document);
