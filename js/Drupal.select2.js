@@ -360,7 +360,8 @@
     var self = this,
         optionsForStringToFunctionConversion = [
           'data', 'ajax', 'query', 'formatResult', 'formatSelection', 'initSelection'
-        ];
+        ],
+        elementTagName = $element.prop("tagName");
     
     $.each(optionsForStringToFunctionConversion, function (index, propertyName) {
       if (options[propertyName] && typeof options[propertyName] == 'string') {
@@ -440,11 +441,14 @@
       $element.val(cur_val);
     }
     
-    // disabled_options process
-    if (options.disabled_options) {
-      $.each(options.disabled_options, function (index, value) {
-        $('option[value="' + value + '"]', $element).prop('disabled', true);
-      });
+    if (elementTagName == 'SELECT') {
+      // disabled_options process
+      if (options.disabled_options) {
+        $.each(options.disabled_options, function (index, value) {
+          $('option[value="' + value + '"]', $element).prop('disabled', true);
+        });
+      }
+      options.jqui_sortable = false;
     }
     
     return options;
