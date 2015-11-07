@@ -554,18 +554,17 @@ function select2_process_textfield($element, &$form_state) {
     array_unshift($element['#element_validate'], '_select2_comma_replacement_validate');
   }
 
-    $library = libraries_detect('select2');
+  $library = libraries_detect('select2');
 
-    $branch_version = substr($library['version'], 0, 1);
+  $branch_version = substr($library['version'], 0, 1);
 
-    switch($branch_version) {
-      case 4:
-//         $element['#type'] = 'select';
-//         $element['#theme'] = 'select';
-//         $element['#options'][$element['#default_value']] = $element['#default_value'];
-//         dpm($element);
-        break;
-    }
+  switch($branch_version) {
+    case 4:
+//       $element['#type'] = 'select';
+//       $element['#theme'] = 'select';
+//       $element['#options'][$element['#default_value']] = $element['#default_value'];
+      break;
+  }
 
   return $element;
 }
