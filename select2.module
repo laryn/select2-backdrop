@@ -372,8 +372,8 @@ function select2_select_element_process($element, &$form_state) {
     }
 
     if (isset($item_hover_title)) {
-      $element['#select2']['formatSelection'] = 'formatSelection_taxonomy_terms_item';
-      $element['#select2']['formatResult'] = 'formatResult_taxonomy_terms_item';
+      $element['#select2']['formatSelection'] = 'formatSelectionTaxonomyTermsItem';
+      $element['#select2']['formatResult'] = 'formatResultTaxonomyTermsItem';
     }
 
     $element['#select2']['data'] = $data;
@@ -447,17 +447,17 @@ function select2_process_textfield($element, &$form_state) {
   $s2_ac_defaults = array(
     'autocomplete_path'  => $element['#autocomplete_path'],
     'minimumInputLength' => 1,
-    'formatResult'       => 'ac_format_result',
-    'formatSelection'    => 'ac_fiels_FormatSelection',
-    'initSelection'      => 'ac_s2_init_selecttion',
-    'ajax'               => 'ac_element_get_ajax_object',
+    'formatResult'       => 'acFormatResult',
+    'formatSelection'    => 'acFielsFormatSelection',
+    'initSelection'      => 'acS2InitSelecttion',
+    'ajax'               => 'getAjaxObjectForAcElement',
     'containerCssClass'  => 'ac-replaced-by-select2',
   );
 
   $element['#attributes'] += array(
     'data-select2-ajax'     => 'ac_element_ajax',
     'data-select2-ajaxpath' => url($element['#autocomplete_path']),
-    'data-select2-initSelection' => 'ac_s2_init_selecttion'
+    'data-select2-initSelection' => 'acS2InitSelecttion'
   );
 
   if (!isset($element['#required']) || !$element['#required']) {
@@ -474,9 +474,9 @@ function select2_process_textfield($element, &$form_state) {
       $s2_ac_defaults['separator'] = ',';
       $s2_ac_defaults['comma_replacement'] = SELECT2_COMMA_REPLACEMENT;
 
-      $s2_ac_defaults['initSelection'] = 'taxonomy_term_ref_ac_s2_init_selecttion';
+      $s2_ac_defaults['initSelection'] = 'taxonomyTermRefAcS2InitSelecttion';
 
-      $element['#attributes']['data-select2-initSelection'] = 'taxonomy_term_ref_ac_s2_init_selecttion';
+      $element['#attributes']['data-select2-initSelection'] = 'taxonomyTermRefAcS2InitSelecttion';
 
       $description_prefix = '';
 
@@ -504,7 +504,7 @@ function select2_process_textfield($element, &$form_state) {
     if (strstr($field_instance['widget']['type'], '_tags') !== FALSE) {
       $s2_ac_defaults['separator'] = ',';
       $s2_ac_defaults['tokenSeparators'] = array(',');
-      $s2_ac_defaults['initSelection'] = 'taxonomy_term_ref_ac_s2_init_selecttion';
+      $s2_ac_defaults['initSelection'] = 'taxonomyTermRefAcS2InitSelecttion';
 
       if ($element['#value']) {
         $s2_ac_defaults['comma_replacement'] = SELECT2_COMMA_REPLACEMENT;
@@ -971,9 +971,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   $branch_version = substr($library['version'], 0, 1);
 
-  drupal_add_js(SELECT2_MODULE_PATH . '/js/select2_integration.js', array('weight' => 1000));
-
-//   drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
+  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
 
   drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
@@ -1118,7 +1116,7 @@ function _select2_default_settings() {
   return array(
     'separator'               => SELECT2_VALUES_SEPARATOR,
     'jqui_sortable'           => FALSE,
-    'dropdownAutoWidth'       => FALSE,
+    'dropdownAutoWidth'       => TRUE,
     'width'                   => variable_get('select2_default_width', 'element'),
     'containerCssClass'       => '',
     'minimumResultsForSearch' => variable_get('select2_min_options_count_for_search', 15),
@@ -1273,8 +1271,6 @@ function _select2_current_path_is_admin() {
     }
 
     $referrer_url_path = str_replace($site_url_prefix, '', $referrer_url);
-
-    $patterns = path_get_admin_paths();
 
     if (path_is_admin($referrer_url_path)) {
       $result = TRUE;
