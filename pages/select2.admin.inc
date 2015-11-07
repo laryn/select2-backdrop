@@ -69,6 +69,7 @@ function select2_settings_form($form, &$form_state) {
       'element' => 'Element',
       'copy' => 'Copy',
       'resolve' => 'Resolve',
+      'auto' => 'Auto',
     ),
     '#description' => t('Values description:
 <ul>
