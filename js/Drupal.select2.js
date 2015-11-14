@@ -15,10 +15,25 @@
   };
   
   String.prototype.quote_trim = function () {
-    return this.extTrim('"');
+    var trimRegex = new RegExp('^"(.*)?"$', "g"),
+        resultString = this;
+    
+    while (trimRegex.test(resultString)) {
+      resultString = this.replace(trimRegex, '$1');
+    }
+
+    return resultString.toString();
   };
   
-  
+  String.prototype.regExpReplace = function (rule, replaceValue, ruleFlags) {
+    ruleFlags = ruleFlags || 'g';
+    var trimRegex = new RegExp(rule, ruleFlags),
+        resultString = this;
+    
+    resultString = this.replace(trimRegex, replaceValue);
+
+    return resultString.toString();
+  };
   
   String.prototype.trimDotes = function() {
     return this.extTrim('\\.');
@@ -107,6 +122,56 @@
 
   };
   
+  Drupal.Select2.functionsScope.entityReferenceInitSelecttion = function (element, callback) {
+    var def_values = $(element).select2('val'),
+        select2 = $(element).data('select2'),
+        select2Options = select2 ? select2.opts : false,
+        hideIds = select2Options ? select2Options.hideEntityIds : false,
+        comaReplacement = select2Options ? select2Options.comma_replacement : false;
+
+    if (typeof def_values == 'string') {
+
+      var label = def_values;
+      label = label.quote_trim().replace(/"{2,}/g, '"');
+
+      if (hideIds) {
+        label = label.replace(/\([0-9]+\)$/g, '');
+      }
+      
+      if (comaReplacement) {
+        label = label.regExpReplace('{' + comaReplacement + '}', ',');
+      }
+      
+      callback({
+        id: def_values,
+        text: label
+      });
+    } else if (typeof (def_values) == 'object') {
+
+      data = [];
+      for (var i = 0; i < def_values.length; i++) {
+
+        var label = def_values[i];
+        label = label.quote_trim().replace(/"{2,}/g, '"');
+
+        if (hideIds) {
+          label = label.replace(/\([0-9]+\)$/g, '');
+        }
+        
+        if (comaReplacement) {
+          label = label.regExpReplace('{' + comaReplacement + '}', ',');
+        }
+        
+        data.push({
+          id: def_values[i],
+          text: label
+        });
+      }
+      callback(data);
+    }
+
+  };
+  
   Drupal.Select2.functionsScope.ac_s2_init_selecttion = Drupal.Select2.functionsScope.acS2InitSelecttion;
   
   Drupal.Select2.functionsScope.taxonomyTermRefAcS2InitSelecttion = function (element, callback) {
@@ -116,7 +181,7 @@
     if (typeof def_values == 'string') {
 
       var label = def_values;
-      label = label.replace(/{{;}}/g, ',').replace(/""/g, '"').quote_trim();
+      label = label.quote_trim().replace(/{{;}}/g, ',').replace(/"{2,}/g, '"');
 
       callback({
         id: def_values,
@@ -128,7 +193,7 @@
       for (var i = 0; i < def_values.length; i++) {
 
         var label = def_values[i];
-        label = label.replace(/{{;}}/g, ',').replace(/""/g, '"').quote_trim();
+        label = label.quote_trim().replace(/{{;}}/g, ',').replace(/"{2,}/g, '"');
 
         data.push({
           id: def_values[i],
@@ -285,6 +350,7 @@
     } catch (e) {
       if (typeof window.console == "object" && typeof console.error == "function") {
         console.error('Error: ' + e);
+        return;
       }
     }
     
