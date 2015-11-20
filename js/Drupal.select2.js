@@ -319,7 +319,7 @@
       $('select', this.context).once('select2-attach').atachSelect2();
     }
     
-    $('.use-select-2:not(.select2-attach-processed)', this.context)
+    $('select.use-select-2, input[type="text"].use-select-2, input[type="hidden"].use-select-2', this.context)
     .once('select2-attach').atachSelect2();
   }
   
