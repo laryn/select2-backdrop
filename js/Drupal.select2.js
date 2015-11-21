@@ -72,6 +72,37 @@
     
   };
   
+  /**
+   * Default options for the Select2.
+   * @public
+   */
+  Drupal.Select2.Defaults = Drupal.Select2.Defaults || {
+    'adaptContainerCssClass': function (className) {
+      if (!Drupal.Select2.Defaults.classesListForCopyFromElement
+          && !Drupal.Select2.Defaults.classesExcludedForCopy) {
+        return clazz;
+      }
+      switch (typeof Drupal.Select2.Defaults.classesListForCopyFromElement) {
+        case 'string':
+          if (className == Drupal.Select2.Defaults.classesListForCopyFromElement) {
+            return className;
+          }
+          break;
+        case 'object':
+          if ($.inArray(className, Drupal.Select2.Defaults.classesListForCopyFromElement) >= 0) {
+            return className;
+          }
+          break;
+      }
+      return false;
+    },
+    'classesListForCopyFromElement': ['error'],
+    'width': 'copy',
+    'predefineExcludions': [
+      '.tabledrag-hide select'
+    ],
+  };
+  
   Drupal.Select2.functionsScope = Drupal.Select2.functionsScope || {}; 
   
   Drupal.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
@@ -244,36 +275,6 @@
   };
   
   Drupal.Select2.functionsScope.ac_element_get_ajax_object = Drupal.Select2.functionsScope.getAjaxObjectForAcElement;
-  
-  /**
-   * Default options for the Select2.
-   * @public
-   */
-  Drupal.Select2.Defaults = Drupal.Select2.Defaults || {
-    'adaptContainerCssClass': function (className) {
-      if (!Drupal.Select2.Defaults.classesListForCopyFromElement) {
-        return clazz;
-      }
-      switch (typeof Drupal.Select2.Defaults.classesListForCopyFromElement) {
-        case 'string':
-          if (className == Drupal.Select2.Defaults.classesListForCopyFromElement) {
-            return className;
-          }
-          break;
-        case 'object':
-          if ($.inArray(className, Drupal.Select2.Defaults.classesListForCopyFromElement)) {
-            return className;
-          }
-          break;
-      }
-      return false;
-    },
-    'classesListForCopyFromElement': ['error'],
-    'width': 'copy',
-    'predefineExcludions': [
-      '.tabledrag-hide select'
-    ],
-  };
   
   Drupal.Select2.prototype.setContext = function(context, settings) {
     this.context = context;
