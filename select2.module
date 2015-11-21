@@ -1051,7 +1051,9 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   $branch_version = substr($library['version'], 0, 1);
 
-  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array('weight' => 1000));
+  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array(
+    'group' => JS_LIBRARY,
+  ));
 
   drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
