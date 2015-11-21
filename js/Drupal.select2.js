@@ -103,6 +103,14 @@
     ],
   };
   
+  Drupal.Select2.prototype.attachBehaviors = function(element) {
+    $.each(Drupal.behaviors, function () {
+      if ($.isFunction(this.select2attach)) {
+        this.select2attach(element);
+      }
+    });
+  }
+  
   Drupal.Select2.functionsScope = Drupal.Select2.functionsScope || {}; 
   
   Drupal.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
@@ -354,6 +362,8 @@
         return;
       }
     }
+    
+    Drupal.Select2Processor.attachBehaviors($element);
     
     var select2Container = false;
 
