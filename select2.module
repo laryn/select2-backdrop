@@ -16,7 +16,8 @@ define('SELECT2_MIN_PLUGIN_VERSION', '3.4.5');
 
 define('SELECT2_MIN_JQUPDATE_VERSION', '2.4');
 
-define('SELECT2_PLUGIN_PATH', 'sites/all/libraries/select2');
+//define('SELECT2_PLUGIN_PATH', 'sites/all/libraries/select2');
+define('SELECT2_PLUGIN_PATH', 'libraries/select2');
 define('SELECT2_MODULE_PATH', drupal_get_path('module', 'select2'));
 define('SELECT2_VALUES_SEPARATOR', '¶');
 define('SELECT2_COMMA_REPLACEMENT', '{;}');
@@ -250,6 +251,16 @@ function select2_element_info_alter(&$type) {
 /**
  * Select element process.
  */
+if (!function_exists('taxonomy_get_parents_all')) {
+  function taxonomy_get_parents_all($tid) {
+    return taxonomy_term_load_parents_all($tid);
+  }
+}
+if (!function_exists('taxonomy_get_parents')) {
+  function taxonomy_get_parents($tid) {
+    return taxonomy_term_load_parents($tid);
+  }
+}
 function select2_select_element_process($element, &$form_state) {
 
   if (isset($element['#options']) && is_array($element['#options'])) {
@@ -911,7 +922,8 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
 
     $rebuild_options_vocs_list = select2_taxonomy_volabilaries_to_rebuild_options();
 
-    $terms = taxonomy_term_load_multiple(FALSE, array('vid' => $taxonomy_vocabulary->vid));
+  //$terms = taxonomy_term_load_multiple(FALSE, array('vid' => $taxonomy_vocabulary->vid));
+    $terms = taxonomy_term_load_multiple(FALSE, array('vocabulary' => $v_mname));
 
     foreach ($values as $key => $tid) {
 
@@ -936,16 +948,18 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
       // Trying to add new term. Get max weight of terms in current voc for
       // adding new term at the end of list.
       $max_weight_select = db_select('taxonomy_term_data', 'td')
-      ->condition('vid', $taxonomy_vocabulary->vid);
+      //->condition('vid', $taxonomy_vocabulary->vid);
+        ->condition('vocabulary', $taxonomy_vocabulary->machine_name);
       $max_weight_select->addExpression('MAX(td.weight)');
 
       $max_weight = $max_weight_select->execute()->fetchField();
 
       $max_weight = $max_weight ? $max_weight + 1 : 1;
 
-      $new_term = new stdClass();
+      $new_term = new TaxonomyTerm(); // stdClass();
 
-      $new_term->vid = $taxonomy_vocabulary->vid;
+    //$new_term->vid = $taxonomy_vocabulary->vid;
+      $new_term->vocabulary = $taxonomy_vocabulary->machine_name;
       $new_term->name = $tid;
       $new_term->weight = $max_weight;
 

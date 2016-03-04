@@ -367,8 +367,8 @@
     
     var select2Container = false;
 
-    if (options.events_hadlers) {
-      $.each(options.events_hadlers, function (eventName, handlerName) {
+    if (options.events_handlers) {
+      $.each(options.events_handlers, function (eventName, handlerName) {
         var handler = self.getObjectOrFunctionByName(handlerName);
         if (handler && typeof handler == 'function') {
           $element.on(eventName, handler);
