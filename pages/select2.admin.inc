@@ -161,7 +161,7 @@ that have parents with "<b>form-item</b>" class.'),
 function select2_settings_form_submit($form, &$form_state) {
 
   if ($form['setting_vtabs']['loading_rules']['select2_update_settings_by_ajax']['#default_value'] != $form_state['values']['select2_update_settings_by_ajax']) {
-    drupal_flush_all_caches();
-    drupal_set_message(t('Caches cleared.'));
+    backdrop_flush_all_caches();
+    backdrop_set_message(t('Caches cleared.'));
   }
 }

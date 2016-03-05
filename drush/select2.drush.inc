@@ -51,7 +51,7 @@ function select2_drush_help($section) {
 function _select2_drush_download_select2() {
 
   // Get the path from the argument, if site, or use the default.
-  $drush_context = drush_get_context('DRUSH_DRUPAL_ROOT');
+  $drush_context = drush_get_context('DRUSH_BACKDROP_ROOT');
 
   // Can we use Libraries API?
   if (module_exists('libraries') && function_exists('libraries_get_path')) {

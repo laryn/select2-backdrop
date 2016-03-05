@@ -39,14 +39,14 @@
     return this.extTrim('\\.');
   }
   
-  Drupal.select2functions = Drupal.select2functions || {};
+  Backdrop.select2functions = Backdrop.select2functions || {};
   
   /**
    * @constructor
-   * @this {Drupal.Select2}
+   * @this {Backdrop.Select2}
    * @param {DOM} context The context.
    */
-  Drupal.Select2 = function(context) {
+  Backdrop.Select2 = function(context) {
     
     /**
      * Current context.
@@ -56,16 +56,16 @@
     
     this.contextSettings = null;
     
-    this.Defaults = Drupal.Select2.Defaults;
+    this.Defaults = Backdrop.Select2.Defaults;
     
     this.functionsScopesNames = [
-      'Drupal.Select2.functionsScope',
-      'Drupal.select2functions'
+      'Backdrop.Select2.functionsScope',
+      'Backdrop.select2functions'
     ];
     
     function setSelect2Defaults () {
-      $.extend(true, $.fn.select2.defaults, Drupal.Select2.Defaults);
-      $.extend(true, $.fn.select2.defaults, Drupal.settings.select_2.default_settings);
+      $.extend(true, $.fn.select2.defaults, Backdrop.Select2.Defaults);
+      $.extend(true, $.fn.select2.defaults, Backdrop.settings.select_2.default_settings);
     }
     
     setSelect2Defaults();
@@ -76,20 +76,20 @@
    * Default options for the Select2.
    * @public
    */
-  Drupal.Select2.Defaults = Drupal.Select2.Defaults || {
+  Backdrop.Select2.Defaults = Backdrop.Select2.Defaults || {
     'adaptContainerCssClass': function (className) {
-      if (!Drupal.Select2.Defaults.classesListForCopyFromElement
-          && !Drupal.Select2.Defaults.classesExcludedForCopy) {
+      if (!Backdrop.Select2.Defaults.classesListForCopyFromElement
+          && !Backdrop.Select2.Defaults.classesExcludedForCopy) {
         return clazz;
       }
-      switch (typeof Drupal.Select2.Defaults.classesListForCopyFromElement) {
+      switch (typeof Backdrop.Select2.Defaults.classesListForCopyFromElement) {
         case 'string':
-          if (className == Drupal.Select2.Defaults.classesListForCopyFromElement) {
+          if (className == Backdrop.Select2.Defaults.classesListForCopyFromElement) {
             return className;
           }
           break;
         case 'object':
-          if ($.inArray(className, Drupal.Select2.Defaults.classesListForCopyFromElement) >= 0) {
+          if ($.inArray(className, Backdrop.Select2.Defaults.classesListForCopyFromElement) >= 0) {
             return className;
           }
           break;
@@ -103,17 +103,17 @@
     ],
   };
   
-  Drupal.Select2.prototype.attachBehaviors = function(element) {
-    $.each(Drupal.behaviors, function () {
+  Backdrop.Select2.prototype.attachBehaviors = function(element) {
+    $.each(Backdrop.behaviors, function () {
       if ($.isFunction(this.select2attach)) {
         this.select2attach(element);
       }
     });
   }
   
-  Drupal.Select2.functionsScope = Drupal.Select2.functionsScope || {}; 
+  Backdrop.Select2.functionsScope = Backdrop.Select2.functionsScope || {}; 
   
-  Drupal.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
+  Backdrop.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
 
     if (term.hover_title) {
       return term.hover_title;
@@ -122,9 +122,9 @@
     return term.text;
   };
   
-  Drupal.Select2.functionsScope.formatSelection_taxonomy_terms_item = Drupal.Select2.functionsScope.formatSelectionTaxonomyTermsItem;
+  Backdrop.Select2.functionsScope.formatSelection_taxonomy_terms_item = Backdrop.Select2.functionsScope.formatSelectionTaxonomyTermsItem;
   
-  Drupal.Select2.functionsScope.formatResultTaxonomyTermsItem = function (term) {
+  Backdrop.Select2.functionsScope.formatResultTaxonomyTermsItem = function (term) {
 
     var attributes = '';
     var prefix = '';
@@ -137,21 +137,21 @@
     return '<span class="taxonomy_terms_item" ' + attributes + '>' + term.text + ' </span>' + prefix;
   };
   
-  Drupal.Select2.functionsScope.formatResult_taxonomy_terms_item = Drupal.Select2.functionsScope.formatResultTaxonomyTermsItem;
+  Backdrop.Select2.functionsScope.formatResult_taxonomy_terms_item = Backdrop.Select2.functionsScope.formatResultTaxonomyTermsItem;
   
-  Drupal.Select2.functionsScope.acFormatResult = function (result) {
+  Backdrop.Select2.functionsScope.acFormatResult = function (result) {
     return result.text;
   };
   
-  Drupal.Select2.functionsScope.ac_format_result = Drupal.Select2.functionsScope.acFormatResult;
+  Backdrop.Select2.functionsScope.ac_format_result = Backdrop.Select2.functionsScope.acFormatResult;
   
-  Drupal.Select2.functionsScope.acFielsFormatSelection = function (item) {
+  Backdrop.Select2.functionsScope.acFielsFormatSelection = function (item) {
     return item.text;
   };
   
-  Drupal.Select2.functionsScope.ac_fiels_FormatSelection = Drupal.Select2.functionsScope.acFielsFormatSelection;
+  Backdrop.Select2.functionsScope.ac_fiels_FormatSelection = Backdrop.Select2.functionsScope.acFielsFormatSelection;
   
-  Drupal.Select2.functionsScope.acS2InitSelecttion = function (element, callback) {
+  Backdrop.Select2.functionsScope.acS2InitSelecttion = function (element, callback) {
     var def_values = $(element).select2('val');
 
     callback({
@@ -161,7 +161,7 @@
 
   };
   
-  Drupal.Select2.functionsScope.entityReferenceInitSelecttion = function (element, callback) {
+  Backdrop.Select2.functionsScope.entityReferenceInitSelecttion = function (element, callback) {
     var def_values = $(element).select2('val'),
         select2 = $(element).data('select2'),
         select2Options = select2 ? select2.opts : false,
@@ -211,9 +211,9 @@
 
   };
   
-  Drupal.Select2.functionsScope.ac_s2_init_selecttion = Drupal.Select2.functionsScope.acS2InitSelecttion;
+  Backdrop.Select2.functionsScope.ac_s2_init_selecttion = Backdrop.Select2.functionsScope.acS2InitSelecttion;
   
-  Drupal.Select2.functionsScope.taxonomyTermRefAcS2InitSelecttion = function (element, callback) {
+  Backdrop.Select2.functionsScope.taxonomyTermRefAcS2InitSelecttion = function (element, callback) {
 
     var def_values = $(element).select2('val');
 
@@ -244,15 +244,15 @@
 
   };
   
-  Drupal.Select2.functionsScope.taxonomy_term_ref_ac_s2_init_selecttion = Drupal.Select2.functionsScope.taxonomyTermRefAcS2InitSelecttion;
+  Backdrop.Select2.functionsScope.taxonomy_term_ref_ac_s2_init_selecttion = Backdrop.Select2.functionsScope.taxonomyTermRefAcS2InitSelecttion;
   
-  Drupal.Select2.functionsScope.getAjaxObjectForAcElement = function (options) {
+  Backdrop.Select2.functionsScope.getAjaxObjectForAcElement = function (options) {
     return {
       url: function (term) {
         if (options.path_is_absolute) {
-          return options.autocomplete_path + Drupal.encodePath(term);
+          return options.autocomplete_path + Backdrop.encodePath(term);
         }
-        return Drupal.settings.basePath + options.autocomplete_path + '/' + Drupal.encodePath(term);
+        return Backdrop.settings.basePath + options.autocomplete_path + '/' + Backdrop.encodePath(term);
       },
       dataType: 'json',
       quietMillis: 100,
@@ -282,19 +282,19 @@
     };
   };
   
-  Drupal.Select2.functionsScope.ac_element_get_ajax_object = Drupal.Select2.functionsScope.getAjaxObjectForAcElement;
+  Backdrop.Select2.functionsScope.ac_element_get_ajax_object = Backdrop.Select2.functionsScope.getAjaxObjectForAcElement;
   
-  Drupal.Select2.prototype.setContext = function(context, settings) {
+  Backdrop.Select2.prototype.setContext = function(context, settings) {
     this.context = context;
     this.processElements();
   }
   
-  Drupal.Select2.prototype.processElements = function() {
+  Backdrop.Select2.prototype.processElements = function() {
     this.markExcludedElements();
     this.attachSelect2();
   }
   
-  Drupal.Select2.prototype.markExcludedElements = function() {
+  Backdrop.Select2.prototype.markExcludedElements = function() {
     
     if (!this.context) return;
     
@@ -302,15 +302,15 @@
       $(selector, this.context).once('select2-predefined-excludions').addClass('no-select2');
     })
     
-    if (Drupal.settings.select_2.excludes.by_selectors.length > 0) {
-      for (i = 0; i < Drupal.settings.select_2.excludes.by_selectors.length; ++i) {
-        $(Drupal.settings.select_2.excludes.by_selectors[i], this.context)
+    if (Backdrop.settings.select_2.excludes.by_selectors.length > 0) {
+      for (i = 0; i < Backdrop.settings.select_2.excludes.by_selectors.length; ++i) {
+        $(Backdrop.settings.select_2.excludes.by_selectors[i], this.context)
         .once('select2-excluded-by-selectors').addClass('no-select2');
       }
     }
     
-    if (Drupal.settings.select_2.excludes.by_class.length > 0) {
-      var byClassSelector = Drupal.settings.select_2.excludes.by_class.join(', .');
+    if (Backdrop.settings.select_2.excludes.by_class.length > 0) {
+      var byClassSelector = Backdrop.settings.select_2.excludes.by_class.join(', .');
       byClassSelector = '.' + byClassSelector;
       try {
         $(byClassSelector, this.context).once('select2-excluded-by-classes').addClass('no-select2');
@@ -320,11 +320,11 @@
     }
   }
   
-  Drupal.Select2.prototype.attachSelect2 = function() {
+  Backdrop.Select2.prototype.attachSelect2 = function() {
     
     if (!this.context) return;
     
-    if (Drupal.settings.select_2.process_all_selects_on_page) {
+    if (Backdrop.settings.select_2.process_all_selects_on_page) {
       $('select', this.context).once('select2-attach').atachSelect2();
     }
     
@@ -332,7 +332,7 @@
     .once('select2-attach').atachSelect2();
   }
   
-  Drupal.Select2.prototype.attachSelect2ToElement = function($element) {
+  Backdrop.Select2.prototype.attachSelect2ToElement = function($element) {
     
     if ($element.hasClass('no-select2')) return;
     
@@ -346,8 +346,8 @@
       return;
     }
     
-    var options = Drupal.settings.select_2.elements[id]
-                  ? Drupal.settings.select_2.elements[id]
+    var options = Backdrop.settings.select_2.elements[id]
+                  ? Backdrop.settings.select_2.elements[id]
                   : {};
     
     options = this.prepareElementOptions(options, $element);
@@ -363,7 +363,7 @@
       }
     }
     
-    Drupal.Select2Processor.attachBehaviors($element);
+    Backdrop.Select2Processor.attachBehaviors($element);
     
     var select2Container = false;
 
@@ -408,7 +408,7 @@
     
   };
   
-  Drupal.Select2.prototype.searchFunctionInScope = function(functionName) {
+  Backdrop.Select2.prototype.searchFunctionInScope = function(functionName) {
 
     var self = this,
         func = false;
@@ -430,7 +430,7 @@
     return func;
   }
   
-  Drupal.Select2.prototype.getObjectPropertyByName = function (obj, prop) {
+  Backdrop.Select2.prototype.getObjectPropertyByName = function (obj, prop) {
 
     if (typeof obj === 'undefined') {
         return false;
@@ -444,11 +444,11 @@
     return obj[prop];
   }
   
-  Drupal.Select2.prototype.getObjectOrFunctionByName = function (name) {
+  Backdrop.Select2.prototype.getObjectOrFunctionByName = function (name) {
     return this.getObjectPropertyByName(window, name);
   }
   
-  Drupal.Select2.prototype.prepareElementOptions = function(options, $element) {
+  Backdrop.Select2.prototype.prepareElementOptions = function(options, $element) {
     var self = this,
         optionsForStringToFunctionConversion = [
           'data', 'ajax', 'query', 'formatResult', 'formatSelection', 'initSelection'
@@ -551,17 +551,17 @@
    * @param {jQuery object} $element The element that must be checked according to the rules exceptions.
    * @return {Bool} true if element must be skipped and false otherwise.
    */
-  Drupal.Select2.prototype.checkElementForExclusions = function($element) {
+  Backdrop.Select2.prototype.checkElementForExclusions = function($element) {
     if (!$element.id) return false;
     
-    var excludeIds = Drupal.settings.select_2.excludes.by_id.values;
+    var excludeIds = Backdrop.settings.select_2.excludes.by_id.values;
     
     if ($.inArray($element.id, excludeIds) >= 0) {
       return true;
-    } else if (Drupal.settings.select_2.excludes.by_id.reg_exs.length > 0) {
+    } else if (Backdrop.settings.select_2.excludes.by_id.reg_exs.length > 0) {
       // check by regexs for ids
-      for (i = 0; i < Drupal.settings.select_2.excludes.by_id.reg_exs.length; ++i) {
-        var regex = new RegExp(Drupal.settings.select_2.excludes.by_id.reg_exs[i], "ig");
+      for (i = 0; i < Backdrop.settings.select_2.excludes.by_id.reg_exs.length; ++i) {
+        var regex = new RegExp(Backdrop.settings.select_2.excludes.by_id.reg_exs[i], "ig");
 
         if (regex.test($element.id)) {
           return true;
@@ -574,35 +574,35 @@
   
   $.fn.atachSelect2 = function () {
     return this.each(function (index) {
-      if (!Drupal.Select2Processor) return;
+      if (!Backdrop.Select2Processor) return;
       
       var $element = $(this);
       
-      Drupal.Select2Processor.attachSelect2ToElement($element);
+      Backdrop.Select2Processor.attachSelect2ToElement($element);
       
     });
   }
   
-  Drupal.behaviors.select2 = {
+  Backdrop.behaviors.select2 = {
     attach: function (context, settings) {
       
       if (typeof ($.fn.select2) == 'undefined') return;
       
-      Drupal.Select2Processor = Drupal.Select2Processor || new Drupal.Select2();
+      Backdrop.Select2Processor = Backdrop.Select2Processor || new Backdrop.Select2();
       
-      if (Drupal.settings.select_2.settings_updated) {
-        Drupal.Select2Processor.setContext(context);
+      if (Backdrop.settings.select_2.settings_updated) {
+        Backdrop.Select2Processor.setContext(context);
       }
       else {
         
-        Drupal.settings.select_2.settings_updated = true;
+        Backdrop.settings.select_2.settings_updated = true;
         
-        var setting_update_url = Drupal.settings.basePath + 'select2/ajax/get_settings',
+        var setting_update_url = Backdrop.settings.basePath + 'select2/ajax/get_settings',
         jqxhr = $.ajax(setting_update_url)
         .done(function (data) {
           //merging with element defined settings
           try {
-            Drupal.settings.select_2.excludes = data[0].settings.select_2.excludes;
+            Backdrop.settings.select_2.excludes = data[0].settings.select_2.excludes;
           } catch (e) {
             throw 'ERROR while updating settings for select2: ' + e.message;
           }
@@ -611,7 +611,7 @@
           throw 'Select2 setting update ajax request failed.';
         })
         .always(function () {
-          Drupal.Select2Processor.setContext(context);
+          Backdrop.Select2Processor.setContext(context);
         });
       }
       

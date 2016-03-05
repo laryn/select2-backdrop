@@ -18,7 +18,7 @@ function select2_get_settings_ajax() {
     }
   }
 
-  drupal_add_js(
+  backdrop_add_js(
     array(
       'select_2' => array(
         'excludes' => array(
@@ -36,5 +36,5 @@ function select2_get_settings_ajax() {
     ),
     'setting');
 
-  _select2_set_exuled_for_settings();
+  _select2_set_excluded_for_settings();
 }

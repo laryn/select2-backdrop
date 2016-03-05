@@ -18,7 +18,7 @@ define('SELECT2_MIN_JQUPDATE_VERSION', '2.4');
 
 //define('SELECT2_PLUGIN_PATH', 'sites/all/libraries/select2');
 define('SELECT2_PLUGIN_PATH', 'libraries/select2');
-define('SELECT2_MODULE_PATH', drupal_get_path('module', 'select2'));
+define('SELECT2_MODULE_PATH', backdrop_get_path('module', 'select2'));
 define('SELECT2_VALUES_SEPARATOR', '¶');
 define('SELECT2_COMMA_REPLACEMENT', '{;}');
 
@@ -30,7 +30,7 @@ function select2_menu() {
   $items['admin/config/user-interface/select2_settings'] = array(
     'title'            => 'Select2',
     'description'      => 'Select2 module settings',
-    'page callback'    => 'drupal_get_form',
+    'page callback'    => 'backdrop_get_form',
     'page arguments'   => array('select2_settings_form'),
     'access arguments' => array('administer select2'),
     'file'             => 'pages/select2.admin.inc',
@@ -228,7 +228,7 @@ function theme_select2_hidden($variables) {
     $element['#attributes']['id'] = $element['#id'];
   }
 
-  $variables['element']['#children'] = '<input' . drupal_attributes($element['#attributes']) . " />\n";
+  $variables['element']['#children'] = '<input' . backdrop_attributes($element['#attributes']) . " />\n";
 
   return theme('form_element', $variables);
 }
@@ -334,7 +334,7 @@ function select2_select_element_process($element, &$form_state) {
   $variant = variable_get('select2_compression_type', 'minified');
   $element['#attached']['libraries_load'][] = array('select2', $variant);
 
-  $element_id = isset($element['#id']) ? $element['#id'] : (isset($element['#attributes']['id']) ? $element['#attributes']['id'] : drupal_clean_css_identifier($element['#name']));
+  $element_id = isset($element['#id']) ? $element['#id'] : (isset($element['#attributes']['id']) ? $element['#attributes']['id'] : backdrop_clean_css_identifier($element['#name']));
 
   if ($element['#type'] == 'select2_hidden' &&
       isset($element['#options']) &&
@@ -408,7 +408,7 @@ function select2_select_element_process($element, &$form_state) {
 
   }
 
-  drupal_alter('select2_element', $element);
+  backdrop_alter('select2_element', $element);
 
   _select2_set_element_settings($element_id, $element['#select2']);
   $element['#select2_processed'] = TRUE;
@@ -445,7 +445,7 @@ function select2_process_textfield($element, &$form_state) {
                 $element['#id'] :
                 (isset($element['#attributes']['id']) ?
                   $element['#attributes']['id'] :
-                  drupal_clean_css_identifier($element['#name']));
+                  backdrop_clean_css_identifier($element['#name']));
 
   if ((!isset($element['#field_info']) || !$element['#field_info'])
       && isset($element['#field_name']) && $element['#field_name']) {
@@ -572,7 +572,7 @@ function select2_process_textfield($element, &$form_state) {
 
   }
 
-  drupal_alter('select2_element', $element);
+  backdrop_alter('select2_element', $element);
 
   _select2_set_element_settings($element_id, $element['#select2']);
 
@@ -914,7 +914,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
     $values = array();
   }
 
-  $element_id = isset($element['#id']) ? $element['#id'] : (isset($element['#attributes']['id']) ? $element['#attributes']['id'] : drupal_clean_css_identifier($element['#name']));
+  $element_id = isset($element['#id']) ? $element['#id'] : (isset($element['#attributes']['id']) ? $element['#attributes']['id'] : backdrop_clean_css_identifier($element['#name']));
 
   $taxonomy_vocabulary = taxonomy_vocabulary_machine_name_load($v_mname);
 
@@ -966,7 +966,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
       $save_result = taxonomy_term_save($new_term);
 
       if ($save_result == SAVED_NEW) {
-        drupal_set_message(t('New taxonomy term "@term_name" saved in vocabulary "@vocabulary_name". You can edit it on <a href="@edit_term_link">this page</a>.',
+        backdrop_set_message(t('New taxonomy term "@term_name" saved in vocabulary "@vocabulary_name". You can edit it on <a href="@edit_term_link">this page</a>.',
           array(
             '@term_name' => $tid,
             '@vocabulary_name' => $v_mname,
@@ -984,7 +984,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
 
       }
       else {
-        drupal_set_message(t('Error while saving new term - the term skiped while subiting form.'), 'error');
+        backdrop_set_message(t('Error while saving new term - the term skiped while subiting form.'), 'error');
 
         unset($values[$key]);
       }
@@ -1005,7 +1005,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
  * Get locale decimal.
  */
 function select2_get_system_decimal_point() {
-  $dp = &drupal_static(__FUNCTION__, FALSE);
+  $dp = &backdrop_static(__FUNCTION__, FALSE);
 
   if (!$dp) {
 
@@ -1021,7 +1021,7 @@ function select2_get_system_decimal_point() {
  */
 function select2_taxonomy_volabilaries_to_rebuild_options() {
 
-  $rebuild_options_vocs_list = &drupal_static(__FUNCTION__, array());
+  $rebuild_options_vocs_list = &backdrop_static(__FUNCTION__, array());
 
   return $rebuild_options_vocs_list;
 }
@@ -1057,19 +1057,19 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
   global $language;
 
   if ($excluded_paths = variable_get('select2_excluded_paths', '')) {
-    if (drupal_match_path($_GET['q'], $excluded_paths) ||
-      drupal_match_path(drupal_get_path_alias($_GET['q']), $excluded_paths)) {
+    if (backdrop_match_path($_GET['q'], $excluded_paths) ||
+      backdrop_match_path(backdrop_get_path_alias($_GET['q']), $excluded_paths)) {
         return;
     }
   }
 
   $branch_version = substr($library['version'], 0, 1);
 
-  drupal_add_js(SELECT2_MODULE_PATH . '/js/Drupal.select2.js', array(
+  backdrop_add_js(SELECT2_MODULE_PATH . '/js/Backdrop.select2.js', array(
     'group' => JS_LIBRARY,
   ));
 
-  drupal_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
+  backdrop_add_css(SELECT2_MODULE_PATH . '/css/select2_integration.css');
 
   // Load and define exclude lists.
   $process_all_selects = FALSE;
@@ -1085,7 +1085,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   }
 
-  $settings = _select2_set_exuled_for_settings();
+  $settings = _select2_set_excluded_for_settings();
 
   $settings2 = array(
     'select_2' => array(
@@ -1125,7 +1125,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
   if ($lang) {
     $translation_file = select2_get_plugin_path() . '/select2_locale_' . $lang . '.js';
     if (file_exists($translation_file)) {
-      drupal_add_js($translation_file);
+      backdrop_add_js($translation_file);
     }
   }
 
@@ -1144,7 +1144,7 @@ function _select2_element_validate_integer_positive_or_zero($element, &$form_sta
 /**
  * Excluded settings.
  */
-function _select2_set_exuled_for_settings() {
+function _select2_set_excluded_for_settings() {
 
   $select2_settings = array(
     'select_2' => array(
@@ -1195,7 +1195,7 @@ function _select2_set_exuled_for_settings() {
 
 //   if ($select2_settings['select_2']['excludes']) {
 
-//     $js = drupal_add_js($select2_settings, 'setting');
+//     $js = backdrop_add_js($select2_settings, 'setting');
 
 //   }
 
@@ -1229,10 +1229,10 @@ function _select2_default_settings() {
  *   Settings
  */
 function _select2_set_element_settings($element_id, $settings) {
-  $js = &drupal_static('drupal_add_js', array());
+  $js = &backdrop_static('backdrop_add_js', array());
 
   if (!isset($js['settings']) || !isset($js['settings']['data'])) {
-    drupal_add_js(
+    backdrop_add_js(
       array(
         'select_2' => array(
           'elements' => array(
@@ -1244,7 +1244,7 @@ function _select2_set_element_settings($element_id, $settings) {
     return;
   }
 
-  $js_setting_key = &drupal_static('select2_js_setting_key', -1);
+  $js_setting_key = &backdrop_static('select2_js_setting_key', -1);
 
   if ($js_setting_key == -1) {
     foreach ($js['settings']['data'] as $key => $data) {
@@ -1257,7 +1257,7 @@ function _select2_set_element_settings($element_id, $settings) {
   }
 
   if ($js_setting_key == -1) {
-    drupal_add_js(array('select_2' => array(
+    backdrop_add_js(array('select_2' => array(
       'elements' => array(
         $element_id => $settings,
       ),
@@ -1277,10 +1277,10 @@ function _select2_set_element_settings($element_id, $settings) {
 }
 
 function _select2_set_js_settings($settings) {
-  $js = &drupal_static('drupal_add_js', array());
+  $js = &backdrop_static('backdrop_add_js', array());
 
   if (!isset($js['settings']) || !isset($js['settings']['data'])) {
-    drupal_add_js(
+    backdrop_add_js(
     array(
       'select_2' => $settings['select_2'],
     ),
@@ -1289,7 +1289,7 @@ function _select2_set_js_settings($settings) {
     return;
   }
 
-  $js_setting_key = &drupal_static('select2_js_setting_key', -1);
+  $js_setting_key = &backdrop_static('select2_js_setting_key', -1);
 
   if ($js_setting_key == -1) {
     foreach ($js['settings']['data'] as $key => $data) {
@@ -1302,7 +1302,7 @@ function _select2_set_js_settings($settings) {
   }
 
   if ($js_setting_key == -1) {
-    drupal_add_js(
+    backdrop_add_js(
     array(
       'select_2' => $settings['select_2'],
     ),
@@ -1337,7 +1337,7 @@ function _select2_set_js_settings($settings) {
  */
 function _select2_current_path_is_admin() {
 
-  $result = &drupal_static(__FUNCTION__, NULL);
+  $result = &backdrop_static(__FUNCTION__, NULL);
 
   if ($result !== NULL){
     return $result;
