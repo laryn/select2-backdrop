@@ -10,17 +10,24 @@
  * This constant will be used for provide module version,
  * when module installed directly from git repository
  */
-define('SELECT2_MODULE_VERSION', '7.x-1.x-dev');
+#define('SELECT2_MODULE_VERSION', '7.x-1.x-dev');
 
-define('SELECT2_MIN_PLUGIN_VERSION', '3.4.5');
+#define('SELECT2_MIN_PLUGIN_VERSION', '3.4.5');
 
-define('SELECT2_MIN_JQUPDATE_VERSION', '2.4');
+#define('SELECT2_MIN_JQUPDATE_VERSION', '2.4');
 
 //define('SELECT2_PLUGIN_PATH', 'sites/all/libraries/select2');
 define('SELECT2_PLUGIN_PATH', 'libraries/select2');
 define('SELECT2_MODULE_PATH', backdrop_get_path('module', 'select2'));
 define('SELECT2_VALUES_SEPARATOR', '¶');
 define('SELECT2_COMMA_REPLACEMENT', '{;}');
+
+function _select2_config_get($option, $default = NULL) {
+  $result = config_get('select2.settings', $option);
+  if ($result === NULL)
+    $result = $default;
+  return $result;
+}
 
 /**
  * Implements hook_menu().
@@ -53,10 +60,10 @@ function select2_menu() {
  * Implements hook_preprocess_page().
  */
 function select2_preprocess_page($vars) {
-  if (variable_get('select2_use_for_all_select_elements', FALSE)) {
+  if (_select2_config_get('use_for_all_select_elements', FALSE)) {
     if (!_select2_current_path_is_admin() ||
-    (_select2_current_path_is_admin() && variable_get('select2_use_for_all_select_elements_for_admin_pages', FALSE))) {
-      $variant = variable_get('select2_compression_type', 'minified');
+    (_select2_current_path_is_admin() && _select2_config_get('use_for_all_select_elements_for_admin_pages', FALSE))) {
+      $variant = _select2_config_get('compression_type', 'minified');
       libraries_load('select2', $variant);
     }
   }
@@ -302,9 +309,9 @@ function select2_select_element_process($element, &$form_state) {
     return $element;
   }
 
-  if (variable_get('select2_use_for_all_select_elements', FALSE) && !isset($element['#select2'])) {
+  if (_select2_config_get('use_for_all_select_elements', FALSE) && !isset($element['#select2'])) {
     if (!_select2_current_path_is_admin() ||
-    (_select2_current_path_is_admin() && variable_get('select2_use_for_all_select_elements_for_admin_pages', FALSE))) {
+    (_select2_current_path_is_admin() && _select2_config_get('use_for_all_select_elements_for_admin_pages', FALSE))) {
       $element['#select2'] = $s2h_defaults;
     }
   }
@@ -331,7 +338,7 @@ function select2_select_element_process($element, &$form_state) {
 
   $element['#attributes']['class'][] = 'use-select-2';
 
-  $variant = variable_get('select2_compression_type', 'minified');
+  $variant = _select2_config_get('compression_type', 'minified');
   $element['#attached']['libraries_load'][] = array('select2', $variant);
 
   $element_id = isset($element['#id']) ? $element['#id'] : (isset($element['#attributes']['id']) ? $element['#attributes']['id'] : backdrop_clean_css_identifier($element['#name']));
@@ -425,7 +432,7 @@ function select2_process_textfield($element, &$form_state) {
 
   }
 
-  if (!variable_get('select2_use_for_ac_elements', FALSE) ||
+  if (!_select2_config_get('use_for_ac_elements', FALSE) ||
       !isset($element['#autocomplete_path']) ||
       !$element['#autocomplete_path'] ||
       (isset($element['#select_2_processed']) && $element['#select_2_processed'])) {
@@ -555,7 +562,7 @@ function select2_process_textfield($element, &$form_state) {
 
   $element['#select2'] = $result_settings;
 
-  $variant = variable_get('select2_compression_type', 'minified');
+  $variant = _select2_config_get('compression_type', 'minified');
   $element['#attached']['libraries_load'][] = array('select2', $variant);
 
   $element['#select_2_processed'] = TRUE;
@@ -646,7 +653,7 @@ function select2_get_plugin_path() {
   // Try to locate the library path in any possible setup.
   if ($library_path == NULL) {
     // First check the default location.
-    $path = variable_get('select2_plugin_path', SELECT2_PLUGIN_PATH);
+    $path = _select2_config_get('plugin_path', SELECT2_PLUGIN_PATH);
     if (is_dir($path)) {
       $library_path = $path;
     }
@@ -654,7 +661,8 @@ function select2_get_plugin_path() {
     elseif ($library_path == NULL && module_exists('libraries')) {
       if ($path = libraries_get_path('select2')) {
         $library_path = $path;
-        variable_set('select2_plugin_path', $library_path);
+      //variable_set('select2_plugin_path', $library_path);
+        config_set('select2.settings', 'select2_plugin_path', $library_path);
       }
     }
     // If no path is found suggest the default one.
@@ -1056,7 +1064,7 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   global $language;
 
-  if ($excluded_paths = variable_get('select2_excluded_paths', '')) {
+  if ($excluded_paths = _select2_config_get('excluded_paths', '')) {
     if (backdrop_match_path($_GET['q'], $excluded_paths) ||
       backdrop_match_path(backdrop_get_path_alias($_GET['q']), $excluded_paths)) {
         return;
@@ -1074,10 +1082,10 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
   // Load and define exclude lists.
   $process_all_selects = FALSE;
 
-  if (variable_get('select2_use_for_all_select_elements', FALSE)) {
+  if (_select2_config_get('use_for_all_select_elements', FALSE)) {
 
     if (!path_is_admin(current_path()) ||
-    (path_is_admin(current_path()) && variable_get('select2_use_for_all_select_elements_for_admin_pages', FALSE))) {
+    (path_is_admin(current_path()) && _select2_config_get('use_for_all_select_elements_for_admin_pages', FALSE))) {
 
       $process_all_selects = TRUE;
 
@@ -1100,12 +1108,12 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
       ),
       'default_settings' => _select2_default_settings(),
       'process_all_selects_on_page' => $process_all_selects,
-      'no_version_check' => variable_get('select2_disable_jq_version_check', FALSE) ? TRUE : FALSE,
+      'no_version_check' => _select2_config_get('disable_jq_version_check', FALSE) ? TRUE : FALSE,
       'elements' => array(),
     ),
   );
 
-  $settinings_updated_flag = !variable_get('select2_update_settings_by_ajax', FALSE);
+  $settinings_updated_flag = !_select2_config_get('update_settings_by_ajax', FALSE);
 
   $settings2['select_2']['settings_updated'] = $settinings_updated_flag;
 
@@ -1153,9 +1161,9 @@ function _select2_set_excluded_for_settings() {
     ),
   );
 
-  if (variable_get('select2_excluded_ids', '')) {
+  if (_select2_config_get('excluded_ids', '')) {
 
-    $ids = explode("\r\n", variable_get('select2_excluded_ids', ''));
+    $ids = explode("\r\n", _select2_config_get('excluded_ids', ''));
 
     $ids_values = array();
 
@@ -1179,15 +1187,15 @@ function _select2_set_excluded_for_settings() {
 
   }
 
-  if (variable_get('select2_excluded_cleasses', '')) {
-    $classes = explode("\r\n", variable_get('select2_excluded_cleasses', ''));
+  if (_select2_config_get('excluded_classes', '')) {
+    $classes = explode("\r\n", _select2_config_get('excluded_classes', ''));
 
     $select2_settings['select_2']['excludes']['by_class'] = $classes;
 
   }
 
-  if (variable_get('select2_excluded_selectors', '')) {
-    $selectors = explode("\r\n", variable_get('select2_excluded_selectors', ''));
+  if (_select2_config_get('excluded_selectors', '')) {
+    $selectors = explode("\r\n", _select2_config_get('excluded_selectors', ''));
 
     $select2_settings['select_2']['excludes']['by_selectors'] = $selectors;
 
@@ -1213,9 +1221,9 @@ function _select2_default_settings() {
     'separator'               => SELECT2_VALUES_SEPARATOR,
     'jqui_sortable'           => FALSE,
     'dropdownAutoWidth'       => TRUE,
-    'width'                   => variable_get('select2_default_width', 'element'),
+    'width'                   => _select2_config_get('default_width', 'element'),
     'containerCssClass'       => '',
-    'minimumResultsForSearch' => variable_get('select2_min_options_count_for_search', 15),
+    'minimumResultsForSearch' => _select2_config_get('min_options_count_for_search', 15),
   );
 }
 
@@ -1357,7 +1365,7 @@ function _select2_current_path_is_admin() {
 
     $referrer_url = $_SERVER['HTTP_REFERER'];
 
-    $site_url_prefix = url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q=');
+    $site_url_prefix = url(NULL, array('absolute' => TRUE)) . (_select2_config_get('clean_url', 0) ? '' : '?q=');
 
     $prefix_pos = strpos($referrer_url, $site_url_prefix);
 

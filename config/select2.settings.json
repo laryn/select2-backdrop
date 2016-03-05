@@ -1,0 +1,15 @@
+{
+    "_config_name": "select2.settings",
+    "_config_static": true,
+    "compression_type": "minified",
+    "use_for_all_select_elements": true,
+    "use_for_all_select_elements_for_admin_pages": true,
+    "excluded_ids": "",
+    "excluded_classes": "",
+    "min_options_count_for_search": 15,
+    "update_settings_by_ajax": true,
+    "use_for_ac_elements": true,
+    "excluded_paths": "",
+    "excluded_selectors": "",
+    "default_width": "element"
+}
