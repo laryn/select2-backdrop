@@ -3,5 +3,5 @@ description = Adds integration with the Select2 Javascript plugin.
 backdrop = 1.x
 type = module
 package = User interface
-configure = admin/config/user-interface/select2_settings
+configure = admin/config/user-interface/select2
 dependencies[] = libraries

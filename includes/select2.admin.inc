@@ -41,9 +41,10 @@ function select2_settings_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Use for all select elements'),
     '#description' => t('If checked, Select2 plugin will be applied for all select elements on pages.'),
-    '#default_value' => variable_get('select2_use_for_all_select_elements', FALSE),
     '#default_value' => $config->get('use_for_all_select_elements', FALSE),
-_for_admin_pages'] = array(
+  );
+
+  $form['setting_vtabs']['loading_rules']['select2_use_for_all_select_elements_for_admin_pages'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use for all select elements on admin pages'),
     '#description' => t('If checked, Select2 plugin will be applied for all select elements on admin pages.'),
@@ -93,8 +94,10 @@ For example:<br><br>
 </dl>.'),
   );
 
-  $form['setting_vtabs']['excluded_elements']['select2_excluded_cleasses'] = array(
-  $form['setting_vtabs']['excluded_elements']['select2_e    '#default_value' => $config->get('excluded_classes', ''),
+  $form['setting_vtabs']['excluded_elements']['select2_excluded_classes'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Classes'),
+    '#default_value' => $config->get('excluded_classes', ''),
     '#description' => t('Enter one class name per line without dots and spaces.<br>
 For example: "menu-parent-select" will disable attach Select2
 for parent menu select element on node edit and other pages.<br>
@@ -168,20 +171,19 @@ that have parents with "<b>form-item</b>" class.'),
 function select2_settings_form_submit($form, &$form_state) {
   $config = config('select2.settings');
   $values = $form_state['values'];
-  $config->set('compression_type', $values['select2_compression_type']);
-  $config->set('update_settings_by_ajax', (bool) $values['select2_update_settings_by_ajax']);
-  $config->set('use_for_ac_elements', (bool) $values['select2_use_for_ac_elements']);
-
-  $config->set('use_for_all_select_elements', (bool) $values['select2_use_for_all_select_elements']);
-  $config->set('use_for_all_select_elements_for_admin_pages', (bool) $values['select2_use_for_all_select_elements_for_admin_pages']);
-  $config->set('excluded_ids', $values['select2_excluded_ids']);
-  $config->set('excluded_classes', $values['select2_excluded_classes']);
-  $config->set('excluded_paths', $values['select2_excluded_paths']);
-  $config->set('excluded_selectors', $values['select2_excluded_selectors']);
-  $config->set('default_width', $values['select2_default_width']);
-
-  $config->set('min_options_count_for_search', (int) $values['select2_min_options_count_for_search']);
-  $config->save();
+  $config
+    ->set('compression_type', $values['select2_compression_type'])
+    ->set('update_settings_by_ajax', (bool) $values['select2_update_settings_by_ajax'])
+    ->set('use_for_ac_elements', (bool) $values['select2_use_for_ac_elements'])
+    ->set('use_for_all_select_elements', (bool) $values['select2_use_for_all_select_elements'])
+    ->set('use_for_all_select_elements_for_admin_pages', (bool) $values['select2_use_for_all_select_elements_for_admin_pages'])
+    ->set('excluded_ids', $values['select2_excluded_ids'])
+    ->set('excluded_classes', $values['select2_excluded_classes'])
+    ->set('excluded_paths', $values['select2_excluded_paths'])
+    ->set('excluded_selectors', $values['select2_excluded_selectors'])
+    ->set('default_width', $values['select2_default_width'])
+    ->set('min_options_count_for_search', (int) $values['select2_min_options_count_for_search'])
+    ->save();
 
   if ($form['setting_vtabs']['loading_rules']['select2_update_settings_by_ajax']['#default_value'] != $form_state['values']['select2_update_settings_by_ajax']) {
     backdrop_flush_all_caches();
