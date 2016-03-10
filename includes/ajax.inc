@@ -11,9 +11,9 @@ function select2_get_settings_ajax() {
 
   $process_all_selects = FALSE;
 
-  if (variable_get('select2_use_for_all_select_elements', FALSE)) {
+  if (config_get('select2.settings', 'use_for_all_select_elements')) {
     if (!path_is_admin(current_path()) ||
-        (path_is_admin(current_path()) && variable_get('select2_use_for_all_select_elements_for_admin_pages', FALSE))) {
+        (path_is_admin(current_path()) && config_get('select2.settings', 'use_for_all_select_elements_for_admin_pages'))) {
       $process_all_selects = TRUE;
     }
   }
