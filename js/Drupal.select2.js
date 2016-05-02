@@ -113,6 +113,10 @@
   
   Drupal.Select2.functionsScope = Drupal.Select2.functionsScope || {}; 
   
+  Drupal.Select2.functionsScope.baseCreateSearchChoice = function (term) {
+    return {id: term, text: term};
+  };
+  
   Drupal.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
 
     if (term.hover_title) {
@@ -363,6 +367,21 @@
       }
     }
     
+    if (options.locked_ids) {
+      var settedData = $element.select2('data'),
+          needReData = false;
+      $.each(settedData, function (index) {
+        if ($.inArray(settedData[index].id, options.locked_ids) != -1) {
+          settedData[index].locked = true;
+          needReData = true;
+        }
+      });
+      
+      if (needReData) {
+        $element.select2('data', settedData);
+      }
+    }
+    
     Drupal.Select2Processor.attachBehaviors($element);
     
     var select2Container = false;
@@ -451,7 +470,8 @@
   Drupal.Select2.prototype.prepareElementOptions = function(options, $element) {
     var self = this,
         optionsForStringToFunctionConversion = [
-          'data', 'ajax', 'query', 'formatResult', 'formatSelection', 'initSelection'
+          'data', 'ajax', 'query', 'formatResult', 'formatSelection', 
+          'initSelection', 'createSearchChoice'
         ],
         elementTagName = $element.prop("tagName");
     
