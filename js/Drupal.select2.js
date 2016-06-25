@@ -473,7 +473,11 @@
           'data', 'ajax', 'query', 'formatResult', 'formatSelection', 
           'initSelection', 'createSearchChoice'
         ],
-        elementTagName = $element.prop("tagName");
+        elementTagName = $element.prop("tagName"),
+        emptyValueOption = $('option[value=""]', $element).length > 0 ? 
+                           $($('option[value=""]', $element).get(0)) : 
+                           false,
+        clearEmptyValueOption = false;
     
     $.each(optionsForStringToFunctionConversion, function (index, propertyName) {
       if (options[propertyName] && typeof options[propertyName] == 'string') {
@@ -496,21 +500,25 @@
       options.allowClear = false;
     }
     
-    if (options.allowClear || $('option[value=""]', $element).length > 0) {
-      if ($('option[value=""]', $element).length > 0) {
+    if (options.allowClear || emptyValueOption) {
+      
+      if (emptyValueOption) {
         // Checking for empty option exist and set placeholder by its value if
-        // placeholder does not setted
+        // placeholder not defined
         if (options.placeholder == undefined) {
-          options.placeholder = $('option[value=""]', $element).text();
+          options.placeholder = emptyValueOption.text();
         }
-        // Clear empty option text
-        $('option[value=""]', $element).html('');
+        clearEmptyValueOption = true;
       }
-      if (options.placeholder == undefined && $element.attr('placeholder') == undefined) {
+      if (!options.placeholder && !$element.attr('placeholder')) {
         // If placeholder not defined set allowClear option to false
         options.allowClear = false;
-      } else if (options.allowClear == undefined) {
+      } else if (!options.allowClear) {
         options.allowClear = true;
+        if (clearEmptyValueOption) {
+          // Clear empty option text
+          emptyValueOption.html('');
+        }
       }
     }
     
