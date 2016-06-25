@@ -955,7 +955,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
         drupal_set_message(t('New taxonomy term "@term_name" saved in vocabulary "@vocabulary_name". You can edit it on <a href="@edit_term_link">this page</a>.',
           array(
             '@term_name' => $tid,
-            '@vocabulary_name' => $v_mname,
+            '@vocabulary_name' => $taxonomy_vocabulary->name,
             '@edit_term_link' => base_path() . 'taxonomy/term/' . $new_term->tid . '/edit')));
         $rebuild_options_vocs_list[] = $v_mname;
         $values_to_set[] = $new_term->tid;
