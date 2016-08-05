@@ -252,22 +252,10 @@ function select2_element_info_alter(&$type) {
  */
 function select2_select_element_process($element, &$form_state) {
 
-  if (isset($element['#options']) && is_array($element['#options'])) {
-    foreach ($element['#options'] as $key => $value) {
-      if (is_string($value)) {
-        $element['#options'][$key] = htmlspecialchars_decode($value);
-      }
-    }
-  }
-
-  if (isset($element['#select2']['alter'])) {
-
-    if (is_string($element['#select2']['alter'])) {
-      if (function_exists($element['#select2']['alter'])) {
-        $function = $element['#select2']['alter'];
-        $function($element);
-      }
-    }
+  if (isset($element['#name']) && isset($form_state['select2_excluded']) &&
+      in_array($element['#name'], $form_state['select2_excluded'])) {
+    $element['#select2_processed'] = TRUE;
+    return $element;
   }
 
   $s2h_defaults = _select2_default_settings();
@@ -300,7 +288,28 @@ function select2_select_element_process($element, &$form_state) {
 
   if (!isset($element['#select2'])) {
     $element['#select2_processed'] = TRUE;
+    if (isset($element['#name'])) {
+      $form_state['select2_excluded'][] = $element['#name'];
+    }
     return $element;
+  }
+
+  if (isset($element['#options']) && is_array($element['#options'])) {
+    foreach ($element['#options'] as $key => $value) {
+      if (is_string($value)) {
+        $element['#options'][$key] = htmlspecialchars_decode($value);
+      }
+    }
+  }
+
+  if (isset($element['#select2']['alter'])) {
+
+    if (is_string($element['#select2']['alter'])) {
+      if (function_exists($element['#select2']['alter'])) {
+        $function = $element['#select2']['alter'];
+        $function($element);
+      }
+    }
   }
 
   if ((!isset($element['#required']) || !$element['#required']) && !isset($element['#select2']['allowClear'])) {
@@ -401,6 +410,7 @@ function select2_select_element_process($element, &$form_state) {
 
   _select2_set_element_settings($element_id, $element['#select2']);
   $element['#select2_processed'] = TRUE;
+
   return $element;
 }
 
