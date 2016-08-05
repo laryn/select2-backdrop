@@ -892,8 +892,9 @@ function _select2_comma_replacement_validate(&$element, &$form_state) {
 
   $value = str_replace('{{;}}', ',', $value);
 
-  form_set_value($element, $value, $form_state);
+  $element['#value'] = $value;
 
+  form_set_value($element, $value, $form_state);
 }
 
 /**
