@@ -84,7 +84,7 @@ function select2_library_info() {
 
   $library['select2'] = array(
     'title' => 'Select2',
-    'website' => 'http://ivaynberg.github.io/select2',
+    'website' => 'https://github.com/select2/select2',
     'version' => '3.5.4',
     'js' => array(
       $path . '/lib/select2' . $min . '.js' => array(),
@@ -97,7 +97,7 @@ function select2_library_info() {
     'title' => 'Select2 integration',
     'version' => '1.x-1.0',
     'js' => array(
-      $path . '/js/select2-integration.js' => array('weight' => 1000),
+      $path . '/js/Backdrop.select2.js' => array('weight' => 1000),
     ),
     'css' => array(
       $path . '/css/select2-integration.css'
@@ -173,16 +173,6 @@ function select2_element_info_alter(&$type) {
 /**
  * Select element process.
  */
-if (!function_exists('taxonomy_get_parents_all')) {
-  function taxonomy_get_parents_all($tid) {
-    return taxonomy_term_load_parents_all($tid);
-  }
-}
-if (!function_exists('taxonomy_get_parents')) {
-  function taxonomy_get_parents($tid) {
-    return taxonomy_term_load_parents($tid);
-  }
-}
 function select2_select_element_process($element, &$form_state) {
   if (isset($element['#options']) && is_array($element['#options'])) {
     foreach ($element['#options'] as $key => $value) {
@@ -269,7 +259,7 @@ function select2_select_element_process($element, &$form_state) {
       $data_element->id = $id;
       $data_element->text = $value;
       if (isset($element['#select2']['taxonomy_vocabulary']) && $element['#select2']['taxonomy_vocabulary']) {
-        if ($parents = taxonomy_get_parents_all($id)) {
+        if ($parents = taxonomy_term_load_parents_all($id)) {
           if (count($parents) > 1) {
             $parents = array_reverse($parents);
             $item_hover_title = '';
@@ -881,7 +871,8 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   $branch_version = substr($library['version'], 0, 1);
 
-  backdrop_add_js(backdrop_get_path('module', 'select2') . '/js/select2-integration.js', array(
+  backdrop_add_js(backdrop_get_path('module', 'select2') . '/js/Backdrop.select2.js', array(
+    'weight' => 1000,
     'group' => JS_LIBRARY,
   ));
 
@@ -956,6 +947,7 @@ function _select2_element_validate_integer_positive_or_zero($element, &$form_sta
  * Excluded settings.
  */
 function _select2_set_excluded_for_settings() {
+  $config = config('select2.settings');
   $select2_settings = array(
     'select_2' => array(
       'excludes' => array(
@@ -963,8 +955,8 @@ function _select2_set_excluded_for_settings() {
     ),
   );
 
-  if (config_get('select2.settings', 'excluded_ids')) {
-    $ids = explode("\r\n", config_get('select2.settings', 'excluded_ids'));
+  if ($config->get('excluded_ids')) {
+    $ids = explode("\r\n", $config->get('excluded_ids'));
     $ids_values = array();
     $ids_reg_exs = array();
     foreach ($ids as $id) {
@@ -984,16 +976,15 @@ function _select2_set_excluded_for_settings() {
     }
   }
 
-  if (config_get('select2.settings', 'excluded_classes')) {
-    $classes = explode("\r\n", config_get('select2.settings', 'excluded_classes'));
+  if ($config->get('excluded_classes')) {
+    $classes = explode("\r\n", $config->get('excluded_classes'));
     $select2_settings['select_2']['excludes']['by_class'] = $classes;
   }
 
-  if (config_get('select2.settings', 'excluded_selectors')) {
-    $selectors = explode("\r\n", config_get('select2.settings', 'excluded_selectors'));
+  if ($config->get('excluded_selectors')) {
+    $selectors = explode("\r\n", $config->get('excluded_selectors'));
     $select2_settings['select_2']['excludes']['by_selectors'] = $selectors;
   }
-
   return $select2_settings;
 }
 

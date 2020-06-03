@@ -40,14 +40,12 @@ function select2_settings_form($form, &$form_state) {
   $form['setting_vtabs']['loading_rules']['select2_use_for_all_select_elements'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use for all select elements'),
-    '#description' => t('If checked, Select2 plugin will be applied for all select elements on pages.'),
     '#default_value' => $config->get('use_for_all_select_elements', FALSE),
   );
 
   $form['setting_vtabs']['loading_rules']['select2_use_for_all_select_elements_for_admin_pages'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use for all select elements on admin pages'),
-    '#description' => t('If checked, Select2 plugin will be applied for all select elements on admin pages.'),
     '#default_value' => $config->get('use_for_all_select_elements_for_admin_pages', FALSE),
     '#states' => array(
       'invisible' => array(
@@ -58,8 +56,7 @@ function select2_settings_form($form, &$form_state) {
 
   $form['setting_vtabs']['loading_rules']['select2_use_for_ac_elements'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Use for select2 for elements with autocomplete'),
-    '#description' => t('If checked, Select2 plugin will be applied for all elements with autocomplete feature.'),
+    '#title' => t('Use Select2 for elements with autocomplete'),
     '#default_value' => $config->get('use_for_ac_elements', FALSE),
   );
 

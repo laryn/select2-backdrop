@@ -597,14 +597,16 @@
         
         Backdrop.settings.select_2.settings_updated = true;
         
-        var setting_update_url = Backdrop.settings.basePath + 'select2/ajax/get_settings',
+        var setting_update_url = Backdrop.settings.basePath + 'select2/ajax/get_settings';
         jqxhr = $.ajax(setting_update_url)
         .done(function (data) {
-          //merging with element defined settings
-          try {
-            Backdrop.settings.select_2.excludes = data[0].settings.select_2.excludes;
-          } catch (e) {
-            throw 'ERROR while updating settings for select2: ' + e.message;
+          if (data) {
+            //merging with element defined settings
+            try {
+              Backdrop.settings.select_2.excludes = data[0].settings.select_2.excludes;
+            } catch (e) {
+              throw 'ERROR while updating settings for select2: ' + e.message;
+            }
           }
         })
         .fail(function () {
