@@ -4,4 +4,3 @@ backdrop = 1.x
 type = module
 package = User interface
 configure = admin/config/user-interface/select2
-dependencies[] = libraries
