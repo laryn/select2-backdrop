@@ -113,6 +113,13 @@
   
   Backdrop.Select2.functionsScope = Backdrop.Select2.functionsScope || {}; 
   
+  Backdrop.Select2.functionsScope.baseCreateSearchChoice = function (term) {
+    return {
+      id: term, 
+      text: term
+    };
+  };
+  
   Backdrop.Select2.functionsScope.formatSelectionTaxonomyTermsItem = function (term) {
 
     if (term.hover_title) {
@@ -363,6 +370,21 @@
       }
     }
     
+    if (options.locked_ids) {
+      var settedData = $element.select2('data'),
+          needReData = false;
+      $.each(settedData, function (index) {
+        if ($.inArray(settedData[index].id, options.locked_ids) != -1) {
+          settedData[index].locked = true;
+          needReData = true;
+        }
+      });
+      
+      if (needReData) {
+        $element.select2('data', settedData);
+      }
+    }
+    
     Backdrop.Select2Processor.attachBehaviors($element);
     
     var select2Container = false;
@@ -451,9 +473,14 @@
   Backdrop.Select2.prototype.prepareElementOptions = function(options, $element) {
     var self = this,
         optionsForStringToFunctionConversion = [
-          'data', 'ajax', 'query', 'formatResult', 'formatSelection', 'initSelection'
+          'data', 'ajax', 'query', 'formatResult', 'formatSelection', 
+          'initSelection', 'createSearchChoice'
         ],
-        elementTagName = $element.prop("tagName");
+        elementTagName = $element.prop("tagName"),
+        emptyValueOption = $('option[value=""]', $element).length > 0 ? 
+                           $($('option[value=""]', $element).get(0)) : 
+                           false,
+        clearEmptyValueOption = false;
     
     $.each(optionsForStringToFunctionConversion, function (index, propertyName) {
       if (options[propertyName] && typeof options[propertyName] == 'string') {
@@ -476,21 +503,25 @@
       options.allowClear = false;
     }
     
-    if (options.allowClear || $('option[value=""]', $element).length > 0) {
-      if ($('option[value=""]', $element).length > 0) {
+    if (options.allowClear || emptyValueOption) {
+      
+      if (emptyValueOption) {
         // Checking for empty option exist and set placeholder by its value if
-        // placeholder does not setted
+        // placeholder not defined
         if (options.placeholder == undefined) {
-          options.placeholder = $('option[value=""]', $element).text();
+          options.placeholder = emptyValueOption.text();
         }
-        // Clear empty option text
-        $('option[value=""]', $element).html('');
+        clearEmptyValueOption = true;
       }
-      if (options.placeholder == undefined && $element.attr('placeholder') == undefined) {
+      if (!options.placeholder && !$element.attr('placeholder')) {
         // If placeholder not defined set allowClear option to false
         options.allowClear = false;
-      } else if (options.allowClear == undefined) {
+      } else if (!options.allowClear) {
         options.allowClear = true;
+        if (clearEmptyValueOption) {
+          // Clear empty option text
+          emptyValueOption.html('');
+        }
       }
     }
     
