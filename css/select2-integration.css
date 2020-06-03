@@ -72,3 +72,7 @@ div.image-style-new div.select2-display-none,
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-right: 5px;
 }
+
+select.form-select.use-select-2 {
+  padding: 10px 30px 10px 10px;
+}

@@ -25,7 +25,7 @@ function select2_menu() {
     'page callback' => 'select2_get_settings_ajax',
     'delivery callback' => 'ajax_deliver',
     'access callback' => TRUE,
-    'description' => 'Ajax callback for getting select2 settings.',
+    'description' => 'Ajax callback for getting Select2 settings.',
     'type' => MENU_CALLBACK,
     'file' => 'includes/ajax.inc',
   );
@@ -388,20 +388,6 @@ function select2_process_textfield($element, &$form_state) {
       $s2_ac_defaults['initSelection'] = 'taxonomyTermRefAcS2InitSelecttion';
 
       $element['#attributes']['data-select2-initSelection'] = 'taxonomyTermRefAcS2InitSelecttion';
-
-      $description_prefix = '';
-
-      if (isset($element['#description']) && $element['#description']) {
-        $description_prefix = '<br />';
-      }
-      else {
-        $element['#description'] = '';
-      }
-
-      $element['#description'] .= $description_prefix
-                                 . t('For change order of terms, you can drag and drop them into desired position.')
-                                 . '<br />'
-                                 . t('Symbol &quot;,&quot; will aumaticaly separete the inputted terms.');
     }
   }
 
@@ -456,7 +442,7 @@ function select2_process_textfield($element, &$form_state) {
       && (!isset($element['#attributes']['placeholder'])
           && (!isset($element['#select2']['placeholder']) || !$element['#select2']['placeholder']))) {
 
-    $element['#select2']['placeholder'] = t('Type text for search');
+    $element['#select2']['placeholder'] = t('Enter text');
 
   }
 
@@ -591,7 +577,7 @@ function _select2_form_field_ui_field_base_edit_form_alter(&$form, &$form_state,
 
   $form['instance']['settings']['select2_integration']['use_select2'] = array(
     '#type'          => 'checkbox',
-    '#title'         => t('Use Select2 plugin for this field in form'),
+    '#title'         => t('Use the Select2 plugin for this field'),
     '#default_value' => $use_select2,
     '#weight'        => -10,
   );
@@ -645,7 +631,7 @@ function _select2_form_field_ui_field_options_select_edit_form_alter(&$form, &$f
     // For taxonomy term reference fields alow "add terms on fly" future.
     $form['instance']['settings']['select2_integration']['allow_add_onfly'] = array(
       '#type'          => 'checkbox',
-      '#title'         => t('Allow add terms "on fly"'),
+      '#title'         => t('Allow adding terms "on fly"'),
       '#default_value' => isset($form['#instance']['settings']['select2_integration']['allow_add_onfly']) ? $form['#instance']['settings']['select2_integration']['allow_add_onfly'] : FALSE,
       '#weight'        => 0,
       '#states' => array(
@@ -657,7 +643,7 @@ function _select2_form_field_ui_field_options_select_edit_form_alter(&$form, &$f
 
     $form['instance']['settings']['select2_integration']['show_voc_terms_page_link'] = array(
       '#type'          => 'checkbox',
-      '#title'         => t('Show link to vocabulary terms list page'),
+      '#title'         => t('Show a link to vocabulary terms list page'),
       '#default_value' => isset($form['#instance']['settings']['select2_integration']['show_voc_terms_page_link']) ? $form['#instance']['settings']['select2_integration']['show_voc_terms_page_link'] : FALSE,
       '#weight'        => 0,
       '#states' => array(
@@ -713,16 +699,16 @@ function select2_field_widget_form_alter(&$element, &$form_state, $context) {
     $element['#select2']['taxonomy_vocabulary'] = $context['field']['settings']['allowed_values'][0]['vocabulary'];
     $element['#select2']['minimumResultsForSearch'] = 0;
     $element['#element_validate'] = array_merge(array('select2_taxonomy_term_reference_validate'), $element['#element_validate']);
-    $descrition = t('This element supports "Add terms on fly" function.<br />You can select terms from defined terms list, or add your new term(s), by typing name of term(s) manually, press Enter key after typing new term name, for adding it to selected items list. <br /><b>New term(s) will be saved when form will be submitted</b>.');
+    $description = t('This element supports adding terms on the fly.<br />You can select existing terms via autocomplete or add new term(s) by typing and pressing Enter. <b>New term(s) will be saved when form will be submitted</b>.');
     $terms_edit_page_link = '<br />' . l(t('Edit vocabulary terms'), 'admin/structure/taxonomy/' . $element['#select2']['taxonomy_vocabulary'], array('attributes' => array('target' => '_blank', 'class' => array('taxonomy_voc_terms_page_link'))));
     if (isset($settings['show_voc_terms_page_link']) && $settings['show_voc_terms_page_link']) {
-      $descrition .= $terms_edit_page_link;
+      $description .= $terms_edit_page_link;
     }
     elseif (!isset($settings['show_voc_terms_page_link'])) {
-      $descrition .= $terms_edit_page_link;
+      $description .= $terms_edit_page_link;
     }
 
-    $element['#description'] = (isset($element['#description']) ? $element['#description'] . '<br/>' : '') . $descrition;
+    $element['#description'] = (isset($element['#description']) ? $element['#description'] . '<br/>' : '') . $description;
 
     if (isset($element['#multiple']) && $element['#multiple']) {
       $element['#select2']['multiple'] = TRUE;
@@ -795,7 +781,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
       $save_result = taxonomy_term_save($new_term);
 
       if ($save_result == SAVED_NEW) {
-        backdrop_set_message(t('New taxonomy term "@term_name" saved in vocabulary "@vocabulary_name". You can edit it on <a href="@edit_term_link">this page</a>.',
+        backdrop_set_message(t('New term "@term_name" saved in vocabulary "@vocabulary_name". You can edit it on <a href="@edit_term_link">this page</a>.',
           array(
             '@term_name' => $tid,
             '@vocabulary_name' => $taxonomy_vocabulary->name,
@@ -813,7 +799,7 @@ function select2_taxonomy_term_reference_validate(&$element, &$form_state) {
 
       }
       else {
-        backdrop_set_message(t('Error while saving new term - the term skiped while subiting form.'), 'error');
+        backdrop_set_message(t('There was an error while saving a new term and it was skipped.'), 'error');
         unset($values[$key]);
       }
     }
@@ -942,16 +928,6 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
     if (file_exists($translation_file)) {
       backdrop_add_js($translation_file);
     }
-  }
-}
-
-/**
- * Validate values are positive integers.
- */
-function _select2_element_validate_integer_positive_or_zero($element, &$form_state) {
-  $value = $element['#value'];
-  if ($value !== '' && (!is_numeric($value) || intval($value) != $value || $value < 0)) {
-    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
   }
 }
 
