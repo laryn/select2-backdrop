@@ -919,11 +919,11 @@ function _select2_post_load_library_callback(&$library, $version, $variant) {
 
   $lang = '';
 
-  if (isset($user->language) && $user->language) {
-    $lang = $user->language;
+  if (isset($user->langcode) && $user->langcode) {
+    $lang = $user->langcode;
   }
-  elseif (isset($language) && isset($language->language)) {
-    $lang = $language->language;
+  elseif (isset($language) && isset($language->langcode)) {
+    $lang = $language->langcode;
   }
 
   if ($lang) {
